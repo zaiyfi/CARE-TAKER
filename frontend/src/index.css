@@ -1,0 +1,328 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Alata&family=Comfortaa:wght@300;400;500;600;700&family=Orbitron:wght@400;600;700&family=Raleway:wght@400;500;600&family=Rubik:wght@300;400;500;700&display=swap");
+:root {
+  --primary: #e10990;
+  --secondary: #ff74ca;
+  --error: #e7195a;
+  --gray: rgb(211, 211, 211);
+}
+* {
+  font-family: Rubik;
+  font-weight: 400;
+  font-size: 15px;
+}
+img {
+  border-radius: 5px;
+}
+h1,
+button,
+h2,
+h3,
+img,
+label {
+  user-select: none;
+}
+h1 {
+  color: black;
+  font-weight: 500;
+  font-size: 18px;
+}
+.product-details p {
+  font-size: 0.9em;
+}
+.round-img img {
+  object-fit: cover;
+}
+
+.notif {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+.radio {
+  display: none;
+}
+/*        Navigation    */
+
+header {
+  user-select: none;
+  width: 100%;
+  z-index: 2;
+}
+header .logo {
+  color: var(--primary);
+  font-family: comfortaa;
+  font-size: 1.7em;
+}
+a {
+  margin: 0px 5px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+a:hover {
+  color: var(--primary);
+}
+.nav-t-r {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.dropdown {
+  padding: 5px;
+  position: absolute;
+  top: 70px;
+  right: 10px;
+  width: 180px;
+  border-radius: 10px;
+  background-color: white;
+}
+.links {
+  display: flex;
+  width: 100%;
+  cursor: pointer;
+  align-items: center;
+}
+.dropdown .links:hover {
+  color: var(--primary);
+}
+.icons {
+  margin: 0 10px;
+}
+.dropdown button {
+  font-weight: 400;
+  margin: 0px;
+}
+.icon-rotate,
+.dropdown p {
+  transition: 0.1s;
+}
+.dropdown a:hover {
+  color: #6e6e6e;
+}
+.logo {
+  color: var(--primary);
+}
+.col a {
+  margin: 0;
+  text-decoration: underline;
+}
+header .logout {
+  color: var(--primary);
+}
+
+/* Home         Page */
+
+.home {
+  margin: 100px 200px;
+}
+.sidebar {
+  border-right: 1px solid var(--gray);
+}
+.sidebar .buttons {
+  margin: 10px 0px;
+}
+.sidebar .buttons button {
+  width: 100%;
+  text-align: start;
+  line-height: 25px;
+  font-weight: 300;
+}
+.sidebar .buttons button:hover {
+  text-decoration: underline;
+}
+
+.banner {
+  width: 70%;
+  margin: 40px 15%;
+}
+.banner img {
+  height: 200px;
+}
+
+.col {
+  width: 100%;
+  height: 300px;
+  border-radius: 5px;
+}
+
+.col .content {
+  position: relative;
+}
+.fil-css {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.range-input {
+  width: 100%; /* Set the width to 100% of its container */
+  height: 8px; /* Adjust the height as needed */
+  background: var(--primary);
+  outline: none; /* Remove the default outline on focus */
+  border: none; /* Remove the default border */
+  border-radius: 4px; /* Add rounded corners to the track */
+}
+.pricing input {
+  border: 1px solid black;
+  width: 50%;
+  outline: none;
+  padding: 2px;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+/* Products   Table  CSS */
+table thead {
+  background-color: var(--primary);
+}
+table button {
+  text-decoration: underline;
+  margin-left: 2px;
+}
+table .submit {
+  padding: 5px 10px 2px 10px;
+  border-radius: 5px;
+  margin-left: 10px;
+  text-decoration: none;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  transition: all 0.1s ease;
+}
+table .submit:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+/*            Form          CSS */
+.form {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.form h2 {
+  font-size: 2em;
+  text-align: center;
+  margin: 0px 10% 40px 10%;
+  border-bottom: 2px solid var(--primary);
+  width: 80%;
+  padding-bottom: 10px;
+}
+.ant-btn-primary {
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  box-shadow: none;
+}
+option {
+  align-items: center;
+}
+.button {
+  color: var(--primary);
+  padding: 7px 10px;
+  border: 2px solid var(--primary);
+  cursor: pointer;
+  margin: 0 20%;
+  width: 60%;
+  transition: all 0.2s ease-in-out;
+}
+.button:hover {
+  background-color: var(--primary);
+  color: white;
+}
+form input:focus {
+  border: 1px solid var(--primary);
+}
+
+/*         React Icon For Logout       */
+.logout {
+  margin-top: 3px;
+  color: white;
+}
+/*            Capsule Button     CSS   */
+.btn {
+  padding: 7px 10px;
+  border: 2px solid var(--primary);
+  border-radius: 20px;
+  color: var(--primary);
+}
+
+.btn:hover {
+  background-color: var(--primary);
+  color: white;
+}
+/*     UI Error Styling    */
+.error-backend {
+  width: 300px;
+  position: absolute;
+  top: 90px;
+  left: -400px;
+  animation: popup ease-in-out 3s;
+}
+@keyframes popup {
+  0%,
+  100% {
+    opacity: 0;
+    left: -400px;
+  }
+  20%,
+  80% {
+    opacity: 1;
+    left: 20px;
+  }
+}
+
+/* Tabs    Styling */
+/* Style the tab */
+/* .tab {
+  overflow: hidden;
+  position: relative;
+  padding: 0;
+  display: block;
+  margin-right: 2px;
+} */
+
+.tab .links {
+  width: 80%;
+  padding: 10px 0;
+}
+.tab .icons {
+  margin-left: 0px;
+}
+.tab .activeB {
+  color: var(--primary);
+}
+@media screen and (max-width: 768px) {
+  .tab .links {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+@media screen and (max-width: 560px) {
+  .Grids {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .tab .links {
+    margin-left: 10px;
+  }
+}
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
