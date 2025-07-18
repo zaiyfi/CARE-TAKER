@@ -14,6 +14,7 @@ import Navbar from "./components/Navbar";
 import LoaderSpinner from "./components/loaderSpinner";
 import ProtectedUserRoute from "./components/Others/ProtectedUserRoute";
 import ProtectedAdminRoute from "./components/Others/ProtectedAdminRoute";
+import ChatWindow from "./components/Chat/ChatWindow";
 
 // Redux Store
 import store from "./redux/store";
@@ -24,6 +25,8 @@ import ProtectedLogin from "./components/Others/ProtectedLogin";
 import UserData from "./pages/UserData";
 import { setLoader } from "./redux/loaderSlice";
 
+import "leaflet/dist/leaflet.css";
+import NearMeMap from "./pages/NearMeMap";
 function App() {
   // Getting the state of loader
   const { loading } = useSelector((state) => state.loader);
@@ -47,6 +50,7 @@ function App() {
         <Routes>
           <Route path={"/"} element={<Home />} />
           <Route path={"/product/:productId"} element={<ProductDetails />} />
+          <Route path="/near-me" element={<NearMeMap />} />
 
           <Route
             path="/dashboard"
@@ -73,6 +77,7 @@ function App() {
               </ProtectedLogin>
             }
           />
+          <Route path="/chat" element={<ChatWindow />} />
           {/* Sign in/up Routes */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />

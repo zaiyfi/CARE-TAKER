@@ -4,14 +4,26 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 
-// Rquiring other Components
+// Rquiring Routes
 const authRoutes = require("./routes/authRoutes");
 const gigRoutes = require("./routes/gigRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes = require("./routes/messageRoutes");
+
+const http = require("http");
+const cors = require("cors");
 
 // express app
 const app = express();
 
 // middleware
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use((req, res, next) => {
   console.log(req.path, req.method);
@@ -21,10 +33,16 @@ app.use((req, res, next) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/gigs", gigRoutes);
+app.use("/api/chats", chatRoutes);
+app.use("/api/messages", messageRoutes);
+
+// Setup server and socket
+const server = http.createServer(app);
+require("./socket")(server); // pass server to socket.js
 
 // listening to requests
 const PORT = process.env.PORT;
-app.listen(PORT, () => console.log("listening requests on port:", PORT));
+server.listen(PORT, () => console.log("listening requests on port:", PORT));
 
 // connecting to db
 mongoose.connect(process.env.MONGO).then(() => {

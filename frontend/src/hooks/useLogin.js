@@ -31,6 +31,37 @@ export const useLogin = () => {
         dispatch(setUser(json));
         dispatch(setNotif("logged in success"));
         console.log(store.getState());
+
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const coords = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            };
+
+            // ✅ Send to backend
+            const response = await fetch(
+              `/api/auth/${json.user._id}/location`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  // Optional: 'Authorization': `Bearer ${data.token}`
+                },
+                body: JSON.stringify(coords),
+              }
+            );
+            const res = await response.json();
+
+            console.log("Location updated");
+            console.log(res);
+            // 🔁 Redirect or fetch user data here
+          },
+          (error) => {
+            console.error("Location access denied", error);
+            // Proceed even without location
+          }
+        );
       }
     } catch (error) {
       console.error("An error occurred:", error);

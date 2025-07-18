@@ -13,6 +13,8 @@ const {
   viewedProducts,
   removeFavProduct,
   updateImg,
+  updateUserLocation,
+  getNearbyUsers,
 } = require("../controllers/authController");
 const upload = require("../middleware/uploadImage");
 
@@ -48,6 +50,9 @@ router.get("/user/:user_id", getUser);
 
 // Update user status By ADMIN
 router.patch("/update/:user_id", updateStatus);
+router.put("/:id/location", updateUserLocation);
+
+router.post("/nearby", getNearbyUsers);
 
 // Exporting
 module.exports = router;

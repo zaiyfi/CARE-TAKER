@@ -189,6 +189,59 @@ const viewedProducts = async (req, res) => {
     res.status(500).json("Internal Server Error!");
   }
 };
+
+const updateUserLocation = async (req, res) => {
+  const { latitude, longitude } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          location: {
+            type: "Point",
+            coordinates: [longitude, latitude],
+          },
+        },
+      },
+      { new: true } // ensure updated document is returned
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("✅ Location updated for user:", updatedUser.location); // debug
+    res.status(200).json({ message: "Location updated", user: updatedUser });
+  } catch (error) {
+    console.error("❌ Error updating location:", error);
+    res.status(500).json({ message: "Server error while updating location." });
+  }
+};
+
+const getNearbyUsers = async (req, res) => {
+  const { latitude, longitude } = req.body;
+
+  try {
+    const users = await User.find({
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [longitude, latitude],
+          },
+          $maxDistance: 5000, // 5 km
+        },
+      },
+    }).select("name location");
+
+    res.json({ users });
+  } catch (err) {
+    console.error("Geo query failed:", err);
+    res.status(500).json({ message: "Failed to fetch nearby users" });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -199,4 +252,6 @@ module.exports = {
   viewedProducts,
   removeFavProduct,
   updateImg,
+  updateUserLocation,
+  getNearbyUsers,
 };

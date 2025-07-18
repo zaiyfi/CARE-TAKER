@@ -23,6 +23,17 @@ const userSchema = new mongoose.Schema(
     cellNo: {
       type: String,
     },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        default: [0, 0],
+      },
+    },
     password: {
       type: String,
       required: true,
@@ -42,6 +53,7 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+userSchema.index({ location: "2dsphere" });
 
 // Signup/Register Validation
 userSchema.statics.register = async function (name, email, cellNo, password) {

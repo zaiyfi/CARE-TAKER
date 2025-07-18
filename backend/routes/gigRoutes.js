@@ -11,6 +11,7 @@ const {
   deleteGig,
   deleteProductImage,
   addReview,
+  dynamicCategory,
 } = require("../controllers/gigController");
 
 // setting the router
@@ -32,6 +33,7 @@ router.patch("/update/:_id", requireAuth, updateGig);
 // // Get Single/All Products
 router.get("/get-gigs", getGigs);
 router.get("/user-gigs", requireAuth, getUserGigs);
+router.get("/categories", dynamicCategory);
 
 // Delete Products
 // router.delete(

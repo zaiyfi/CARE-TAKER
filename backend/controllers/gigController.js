@@ -191,6 +191,15 @@ const addReview = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+//  Gig caetogories for filters
+const dynamicCategory = async (req, res) => {
+  try {
+    const categories = await Gig.distinct("category");
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
 module.exports = {
   sendApplication,
   uploadImage,
@@ -200,4 +209,5 @@ module.exports = {
   deleteGig,
   deleteProductImage,
   addReview,
+  dynamicCategory,
 };

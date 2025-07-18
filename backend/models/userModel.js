@@ -21,6 +21,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        default: [0, 0],
+      },
+    },
     pic: {
       type: String,
       default:
@@ -32,7 +43,7 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+userSchema.index({ location: "2dsphere" });
 // Signup Validation
 userSchema.statics.signup = async function (
   name,

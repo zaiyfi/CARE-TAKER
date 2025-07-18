@@ -15,6 +15,7 @@ import store from "../redux/store";
 
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(false);
+
   // redux states
   const { auth } = useSelector((state) => state.auth);
   const dispatch = useDispatch();

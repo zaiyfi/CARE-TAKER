@@ -6,6 +6,7 @@ import { setGigs } from "../redux/gigSlice";
 // React/Redux/Router Hooks
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 // Other Modules
 import { BsFillGrid3X3GapFill } from "react-icons/bs";
@@ -21,10 +22,24 @@ const HomeProducts = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000000);
   const [searchQuery, setSearchQuery] = useState("");
+  const [dynamicCat, setdynamicCat] = useState("");
+
+  const navigate = useNavigate();
 
   // // Fetching Products
   useEffect(() => {
     dispatch(setLoader(false));
+    const dynamicCategory = async () => {
+      const response = await fetch("/api/gigs/categories", {
+        method: "GET",
+      });
+      const json = await response.json();
+
+      console.log(json);
+      setdynamicCat(json);
+      console.log(dynamicCat);
+    };
+    dynamicCategory();
 
     if (!gigs?.length > 0) {
       const fetchProducts = async () => {
@@ -93,73 +108,39 @@ const HomeProducts = () => {
         </select>
       </div>
       <div className="flex gap-2 w-[100%]">
-        {/* Filters */}
-        <div className="sidebar p-2 pt-6 pb-10 md:w-2/12 ">
-          <h1 className="text-xl w-1/3 border-b-primary border-b-2 mb-2">
-            Filters
-          </h1>
-          {/* Category Filters */}
-          <h1 className="text-lg text-black ">Category</h1>
-          <div className="buttons">
+        {/*                                        Filters   for category                       */}
+        <div className=" border-e pe-2">
+          <h1 className="text-lg text-black">Category</h1>
+          <div className="buttons flex flex-col gap-2">
             <button
               value="All"
               onClick={(e) => setFilters(e.target.value)}
-              className={filters === "All" && "fil-css"}
+              className={filters === "All" ? "fil-css" : ""}
             >
               All
             </button>
-            <button
-              value="Vehicle"
-              onClick={(e) => setFilters(e.target.value)}
-              className={filters === "Vehicle" && "fil-css"}
-            >
-              Vehicles
-            </button>
-            <button
-              value="Electronics"
-              onClick={(e) => setFilters(e.target.value)}
-              className={filters === "Electronics" && "fil-css"}
-            >
-              Electronics
-            </button>
-            <button
-              value="Sports"
-              onClick={(e) => setFilters(e.target.value)}
-              className={filters === "Sports" && "fil-css"}
-            >
-              Sports
-            </button>
-            <button
-              value="Home"
-              onClick={(e) => setFilters(e.target.value)}
-              className={filters === "Home" && "fil-css"}
-            >
-              Home
-            </button>
-            <button
-              value="Fashion"
-              onClick={(e) => setFilters(e.target.value)}
-              className={filters === "Fashion" && "fil-css"}
-            >
-              Fashion
-            </button>
+            {dynamicCat &&
+              dynamicCat?.map((cat) => (
+                <button
+                  key={cat}
+                  value={cat}
+                  onClick={(e) => setFilters(e.target.value)}
+                  className={filters === cat ? "fil-css" : ""}
+                >
+                  {cat}
+                </button>
+              ))}
           </div>
-          {/* Pricing Filters */}
-          <p>Price (Min to Max)</p>
-          <div className="pricing flex gap-1">
-            <input
-              type="number"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-            />
-            <input
-              type="number"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-            />
+          <div>
+            <button
+              onClick={() => navigate("/near-me")}
+              className=" text-primary border-2 border-primary p-2  rounded-xl hover:bg-primary hover:text-white"
+            >
+              Nearest Me
+            </button>
           </div>
         </div>
-        {/* Filters End */}
+        {/*                                               Filters End */}
 
         {/*  Mapping     Products */}
         <div className="products md:w-10/12">

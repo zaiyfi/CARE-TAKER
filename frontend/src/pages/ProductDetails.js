@@ -1,7 +1,7 @@
 // React and Redux Hooks
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { setLoader } from "../redux/loaderSlice";
 import { setProducts } from "../redux/gigSlice";
 
@@ -15,10 +15,48 @@ import ProductReviews from "../components/Others/ProductReviews";
 
 const ProductDetails = () => {
   // Redux states
+  const navigate = useNavigate();
+
   const { auth } = useSelector((state) => state.auth);
   const { gigs } = useSelector((state) => state.gigs);
   const dispatch = useDispatch();
   const { productId } = useParams();
+
+  // handle chat
+  const handleChat = async () => {
+    const product = gigs.find((p) => p._id === productId);
+    const sellerId = product.applicantId;
+
+    try {
+      const res = await fetch("http://localhost:4000/api/chats", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: auth.user._id,
+          sellerId: sellerId,
+        }),
+      });
+
+      const data = await res.json();
+      console.log("Chat data:", data);
+      console.log(res.status);
+      if (res.ok) {
+        navigate("/chat", {
+          state: {
+            chatId: data._id, // ✅ valid chatId
+            productId,
+            sellerId,
+          },
+        });
+      } else {
+        console.error("Failed to create chat:", data.message);
+      }
+    } catch (error) {
+      console.error("Error creating chat:", error);
+    }
+  };
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   return (
@@ -91,6 +129,14 @@ const ProductDetails = () => {
                       reviews={product.reviews}
                       productId={product._id}
                     />
+                    {auth.user._id !== product.applicantId && (
+                      <button
+                        onClick={handleChat}
+                        className=" bg-primary text-white p-2 rounded-md hover:bg-secondary"
+                      >
+                        Chat Now!
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
