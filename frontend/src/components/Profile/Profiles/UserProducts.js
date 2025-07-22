@@ -10,7 +10,12 @@ const UserProducts = ({ user, products, token, productLength }) => {
       {gigs &&
         filteredGigs.map((gig) => (
           <div>
-            <HomeProductsMap product={gig} user={user} token={token} />
+            <HomeProductsMap
+              key={gig._id}
+              product={gig}
+              user={user}
+              token={token}
+            />
           </div>
         ))}
     </div>

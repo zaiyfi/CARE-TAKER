@@ -1,15 +1,8 @@
-import React, { useState } from "react";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 // Icons
-import { CiHeart } from "react-icons/ci";
-import { FaHeart } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import {
-  setFavProducts,
-  setRemoveFavProducts,
-  setViewedProducts,
-} from "../redux/authSlice";
+import { setViewedProducts } from "../redux/authSlice";
 import store from "../redux/store";
 import { useNavigate } from "react-router-dom";
 
@@ -17,60 +10,13 @@ function HomeProductsMap({ product, user, token }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Fav Products
-  const addFavProduct = async () => {
-    dispatch(setFavProducts(product._id));
-
-    const response = await fetch(
-      `/api/auth/addFavProducts/${user._id}/${product._id}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const json = await response.json();
-    if (!response.ok) {
-      console.log(json);
-      dispatch(setRemoveFavProducts(product._id));
-    }
-    if (response.ok) {
-      console.log(json);
-      console.log(store.getState());
-    }
-  };
-  // Remove FavProducts
-  const removeFavProduct = async () => {
-    dispatch(setRemoveFavProducts(product._id));
-
-    const response = await fetch(
-      `/api/auth/remove/removeFavProducts/${user._id}/${product._id}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const json = await response.json();
-    if (!response.ok) {
-      console.log(json);
-      dispatch(setFavProducts(product._id));
-    }
-    if (response.ok) {
-      console.log(json);
-      console.log(store.getState());
-    }
-  };
-
   // product View
   const ProductDetails = () => {
     navigate(`/product/${product._id}`);
     if (user) {
       const addView = async () => {
         const response = await fetch(
-          `/api/auth/viewProducts/${product._id}/${user._id}`,
+          `/api/auth/viewGig/${product._id}/${user._id}`,
           {
             method: "PATCH",
             headers: {
@@ -112,22 +58,6 @@ function HomeProductsMap({ product, user, token }) {
       </div>{" "}
       {/* Product info */}
       <div className="content px-4 pt-2">
-        <div className="flex justify-between">
-          <h2 className="font-extrabold text-lg">
-            {product.hourlyRate} Rupee/hr
-          </h2>
-          {user && user.favProducts.includes(product._id) ? (
-            <FaHeart
-              className="text-xl cursor-pointer text-red-500"
-              onClick={removeFavProduct}
-            />
-          ) : (
-            <CiHeart
-              className=" text-2xl cursor-pointer"
-              onClick={addFavProduct}
-            />
-          )}
-        </div>
         <h2>{product.name}</h2>
         <p className=" text-xs font-light p-0">
           {formatDistanceToNow(new Date(product.createdAt), {
@@ -138,7 +68,7 @@ function HomeProductsMap({ product, user, token }) {
           className="cursor-pointer underline"
           onClick={() => ProductDetails()}
         >
-          Product Details
+          Gig Details
         </h2>
       </div>
     </div>

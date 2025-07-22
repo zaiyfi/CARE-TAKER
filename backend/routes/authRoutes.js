@@ -7,11 +7,9 @@ const {
   register,
   login,
   getUsers,
-  updateStatus,
+  updateUser,
   getUser,
-  addFavProduct,
   viewedProducts,
-  removeFavProduct,
   updateImg,
   updateUserLocation,
   getNearbyUsers,
@@ -22,17 +20,6 @@ const upload = require("../middleware/uploadImage");
 router.post("/register", register);
 router.post("/login", login);
 
-// Add/Remove product to favourites
-router.patch(
-  "/remove/removeFavProducts/:user_id/:product_id",
-  requireAuth,
-  removeFavProduct
-);
-router.patch(
-  "/addFavProducts/:user_id/:product_id",
-  requireAuth,
-  addFavProduct
-);
 // Update User Image
 router.patch(
   "/image/upload/:user_id",
@@ -42,14 +29,14 @@ router.patch(
 );
 
 // Add product to viewedProduct
-router.patch("/viewProducts/:product_id/:user_id", requireAuth, viewedProducts);
+router.patch("/viewGig/:product_id/:user_id", requireAuth, viewedProducts);
 
 // Get All Users
 router.get("/users", getUsers);
 router.get("/user/:user_id", getUser);
 
 // Update user status By ADMIN
-router.patch("/update/:user_id", updateStatus);
+router.patch("/update/:user_id", updateUser);
 router.put("/:id/location", updateUserLocation);
 
 router.post("/nearby", getNearbyUsers);

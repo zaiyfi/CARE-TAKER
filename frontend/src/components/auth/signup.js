@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const Signup = () => {
   const [IsSubmitting, setIsSubmitting] = useState(false);
@@ -11,8 +10,9 @@ const Signup = () => {
 
   // Handle Submit
   const handleSubmit = async (e) => {
-    setIsSubmitting(true);
     e.preventDefault();
+    setIsSubmitting(true);
+
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
@@ -20,55 +20,85 @@ const Signup = () => {
     formData.append("role", role);
     formData.append("pic", pic);
 
-    const response = await fetch(`/api/auth/signup`, {
-      method: "POST",
-      body: formData,
-    });
-    const json = await response.json();
-    if (!response.ok) {
-      console.log(json.error);
-      setIsSubmitting(false);
+    try {
+      const response = await fetch(`/api/auth/signup`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        console.log(json.error);
+      } else {
+        console.log("Signup success:", json);
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
     }
-    if (response.ok) {
-      console.log(json);
-      setIsSubmitting(false);
-    }
+
+    setIsSubmitting(false);
   };
+
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg mt-6">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Your Name..."
+          className="border rounded-md px-4 py-2"
         />
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Your Email..."
+          className="border rounded-md px-4 py-2"
         />
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Your Password..."
+          className="border rounded-md px-4 py-2"
         />
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option>Choose any option</option>
-          <option value="Patient">Patient</option>
-          <option value="Doctor">Doctor</option>
+
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          className="border rounded-md px-4 py-2"
+        >
+          <option value="">Choose your role</option>
+          <option value="Client">Service Seeker (Client)</option>
+          <option value="Caregiver">Service Provider (Caregiver)</option>
         </select>
-        <input type="file" onChange={(e) => setPic(e.target.files[0])} />
+
         <input
+          type="file"
+          onChange={(e) => setPic(e.target.files[0])}
+          className="border rounded-md px-4 py-2"
+        />
+
+        <button
           type="submit"
           disabled={IsSubmitting}
-          className={`btn text-primary cursor-pointer ${
-            IsSubmitting && "cursor-wait"
+          className={`bg-primary text-white px-4 py-2 rounded-md ${
+            IsSubmitting
+              ? "opacity-60 cursor-not-allowed"
+              : "hover:bg-secondary"
           }`}
-        />
-        <span>Already have an account? Then Login!</span>
+        >
+          {IsSubmitting ? "Submitting..." : "Sign Up"}
+        </button>
+
+        <span className="text-sm text-gray-600">
+          Already have an account?{" "}
+          <a href="/login" className="text-blue-600 underline">
+            Login here
+          </a>
+        </span>
       </form>
     </div>
   );

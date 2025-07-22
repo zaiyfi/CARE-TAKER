@@ -64,7 +64,6 @@ const GigForm = () => {
 
       formDataToSend.append("hourlyRate", formData.price);
       formDataToSend.append("experience", formData.experience);
-      formDataToSend.append("location", formData.city);
       if (formData.cv) formDataToSend.append("cv", formData.cv);
       if (formData.image) formDataToSend.append("image", formData.image);
 
@@ -126,7 +125,6 @@ const GigForm = () => {
   const [err, setErr] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
-    city: "",
     price: "",
     experience: "",
     description: "",
@@ -226,9 +224,7 @@ const GigForm = () => {
             <p>
               <strong>Category:</strong> {userGigs[0].category}
             </p>
-            <p>
-              <strong>City:</strong> {userGigs[0].location}
-            </p>
+
             <p>
               <strong>Hourly Rate:</strong> {userGigs[0].hourlyRate}
             </p>
@@ -277,20 +273,6 @@ const GigForm = () => {
                 )}
               </div>
 
-              <select
-                name="city"
-                id="city"
-                value={formData.city} // ✅ Make sure the selected value is stored in formData
-                onChange={handleChange} // ✅ Handle selection
-                className=" border-2 p-2 rounded-md outline-primary "
-              >
-                <option value="">Select a city</option>
-                {citiesData.cities.map((city, index) => (
-                  <option key={index} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
               {/*                         Categories            */}
               <select
                 name="category"

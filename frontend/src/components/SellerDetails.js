@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setAllUsers } from "../redux/UsersSlice";
-import { Link } from "react-router-dom";
 import store from "../redux/store";
 import Button from "./Others/Button";
 

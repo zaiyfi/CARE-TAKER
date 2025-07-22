@@ -9,20 +9,14 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [cellNo, setCellNo] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    setName("");
-    setEmail("");
-    setPassword("");
-    setCellNo("");
-
     setError(null);
 
-    const registerData = { name, email, cellNo, password };
-    console.log(registerData);
+    const registerData = { name, email, cellNo, password, role };
 
     const response = await fetch("/api/auth/register", {
       body: JSON.stringify(registerData),
@@ -31,28 +25,41 @@ const Register = () => {
         "Content-Type": "application/json",
       },
     });
+
     const json = await response.json();
-    if (!response.ok) {
-      setError(json.error);
+    console.log("Registration response:", json);
+
+    if (response.ok) {
+      console.log("Registration successful:", json);
+      //  Reset fields before navigating
       setName("");
       setEmail("");
       setPassword("");
-    }
-    if (response.ok) {
+      setCellNo("");
+      setRole("");
+
+      //  Navigate after clearing fields
       navigate("/login");
+    }
+
+    if (!response.ok) {
+      setError(json.error || "Registration failed");
+      return; // stop here if error occurred
     }
   };
 
   return (
     <div>
       {error && (
-        <div className="error-backend flex border-2 border-red-500 bg-white p-2 rounded">
+        <div className="error-backend flex border-2 border-red-500 bg-white p-2 rounded mb-4">
           <BiErrorCircle className=" text-red-500 mx-1 text-lg mt-0.5" />
           <p className="text-black">{error}</p>
         </div>
       )}
+
       <form className="form w-full max-w-lg" onSubmit={handleSubmit}>
-        <h2 className="">Register</h2>
+        <h2 className="text-xl font-bold mb-4">Register</h2>
+
         {/* Name and Email */}
         <div className="flex flex-wrap -mx-3 mb-6">
           {/* Name */}
@@ -61,13 +68,14 @@ const Register = () => {
               Name
             </label>
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="John Doe"
             />
           </div>
+
           {/* Email */}
           <div className="w-full md:w-1/2 px-3">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -82,22 +90,24 @@ const Register = () => {
             />
           </div>
         </div>
-        {/* Cell no Input*/}
+
+        {/* Cell No */}
         <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full px-3 mb-6 md:mb-0">
+          <div className="w-full px-3">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
               Cell No
             </label>
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              type="number"
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              type="text"
               value={cellNo}
               onChange={(e) => setCellNo(e.target.value)}
-              placeholder="+1 123 4321 98"
+              placeholder="+1 123 4567 890"
             />
           </div>
         </div>
-        {/* Password Input */}
+
+        {/* Password */}
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full px-3">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -112,12 +122,33 @@ const Register = () => {
             />
           </div>
         </div>
+
+        {/* Role */}
+        <div className="flex flex-wrap -mx-3 mb-6">
+          <div className="w-full px-3">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+              Role
+            </label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 focus:outline-none focus:bg-white"
+            >
+              <option value="">Choose your role</option>
+              <option value="Client">Service Seeker (Client)</option>
+              <option value="Caregiver">Service Provider (Caregiver)</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Submit */}
         <input
           className="button border-slate-400"
           type="submit"
           value="Register"
         />
-        <p className="m mt-2 text-center text-slate-700">
+
+        <p className="mt-2 text-center text-slate-700">
           Already have an account?{" "}
           <Link className="text-black underline font-semibold" to="/login">
             Login

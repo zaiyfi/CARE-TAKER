@@ -28,7 +28,18 @@ module.exports = (server) => {
       async ({ chatId, senderId, receiverId, text }) => {
         try {
           // Save to DB
-          const message = new Message({ chatId, sender: senderId, text });
+          console.log("Saving message to DB:", {
+            chatId,
+            senderId,
+            receiverId,
+            text,
+          });
+          const message = new Message({
+            chatId,
+            senderId,
+            receiverId,
+            text,
+          });
           await message.save();
 
           // Send to receiver

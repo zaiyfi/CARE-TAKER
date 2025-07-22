@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
     cellNo: {
       type: String,
     },
+    city: {
+      type: String, // City name
+      default: "", // Default to empty string
+    },
     location: {
       type: {
         type: String,
@@ -45,7 +49,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "User",
+      default: "Client",
+      required: true,
     },
 
     favProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
@@ -56,7 +61,13 @@ const userSchema = new mongoose.Schema(
 userSchema.index({ location: "2dsphere" });
 
 // Signup/Register Validation
-userSchema.statics.register = async function (name, email, cellNo, password) {
+userSchema.statics.register = async function (
+  name,
+  email,
+  cellNo,
+  role,
+  password
+) {
   if (!name || !email || !password) {
     throw Error("All Fields are Required!");
   }
@@ -73,7 +84,7 @@ userSchema.statics.register = async function (name, email, cellNo, password) {
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
 
-  const user = await this.create({ name, email, cellNo, password: hash });
+  const user = await this.create({ name, email, cellNo, role, password: hash });
   return user;
 };
 

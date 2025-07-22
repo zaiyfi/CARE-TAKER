@@ -27,19 +27,31 @@ import { setLoader } from "./redux/loaderSlice";
 
 import "leaflet/dist/leaflet.css";
 import NearMeMap from "./pages/NearMeMap";
+import FloatingChatList from "./components/Chat/FloatingChatList";
+import UnprotectedRoute from "./components/Others/UnprotectedRoute";
+
+// Socket.io client
+import socket from "./socket";
+
 function App() {
   // Getting the state of loader
   const { loading } = useSelector((state) => state.loader);
   const dispatch = useDispatch();
+  const { auth } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(setLoader(false));
-    try {
-      console.log(store.getState());
-    } catch (error) {
-      console.log("User is not Logged in!");
+    if (auth?.user?._id) {
+      socket.connect();
+      socket.emit("join-chat", { userId: auth.user._id });
     }
-  }, []);
+
+    dispatch(setLoader(false));
+    console.log(store.getState());
+
+    return () => {
+      socket.disconnect(); // important cleanup
+    };
+  }, [auth?.user?._id]);
 
   // Routing
   return (
@@ -55,9 +67,9 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedUserRoute>
+              <ProtectedLogin>
                 <Profile />
-              </ProtectedUserRoute>
+              </ProtectedLogin>
             }
           />
 
@@ -79,10 +91,27 @@ function App() {
           />
           <Route path="/chat" element={<ChatWindow />} />
           {/* Sign in/up Routes */}
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/register"
+            element={
+              <UnprotectedRoute>
+                <Register />
+              </UnprotectedRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <UnprotectedRoute>
+                <Login />
+              </UnprotectedRoute>
+            }
+          />
           <Route path="*" element={<Page404 />} />
         </Routes>
+        <ProtectedLogin>
+          <FloatingChatList />
+        </ProtectedLogin>
       </div>
     </BrowserRouter>
   );

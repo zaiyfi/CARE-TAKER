@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useSelector } from "react-redux";
 
 // Fix default icon (for your own location)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -23,6 +24,7 @@ const otherUserIcon = new L.Icon({
 const NearMeMap = () => {
   const [myLocation, setMyLocation] = useState(null);
   const [nearbyUsers, setNearbyUsers] = useState([]);
+  const { auth } = useSelector((state) => state.auth);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -70,22 +72,24 @@ const NearMeMap = () => {
           </Marker>
 
           {/* Other users (custom icon) */}
-          {nearbyUsers.map((user, index) => (
-            <Marker
-              key={index}
-              position={[
-                user.location.coordinates[1],
-                user.location.coordinates[0],
-              ]}
-              icon={otherUserIcon} // 👈 apply custom icon
-            >
-              <Popup>
-                <strong>{user.name}</strong>
-                <br />
-                Role: Caregiver
-              </Popup>
-            </Marker>
-          ))}
+          {nearbyUsers
+            .filter((user) => user._id !== auth.user._id) // 👈 Filter out logged-in user
+            .map((user, index) => (
+              <Marker
+                key={index}
+                position={[
+                  user.location.coordinates[1],
+                  user.location.coordinates[0],
+                ]}
+                icon={otherUserIcon}
+              >
+                <Popup>
+                  <strong>{user.name}</strong>
+                  <br />
+                  Role: {user.role}
+                </Popup>
+              </Marker>
+            ))}
         </MapContainer>
       )}
     </div>

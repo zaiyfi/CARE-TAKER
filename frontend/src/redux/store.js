@@ -8,6 +8,8 @@ import { gigSlice } from "./gigSlice";
 import { allUsersSlice } from "./UsersSlice";
 import { userGigSlice } from "./userGigSlice";
 import { notifSlice } from "./notifSlice";
+import chatReducer from "./chatSlice";
+import messageReducer from "./messageSlice";
 
 const persistConfig = {
   key: "root",
@@ -22,6 +24,8 @@ const appReducer = combineReducers({
   userGigs: userGigSlice.reducer, // updated key
   users: allUsersSlice.reducer,
   notif: notifSlice.reducer,
+  chat: chatReducer,
+  message: messageReducer,
 });
 
 const rootReducer = (state, action) => {

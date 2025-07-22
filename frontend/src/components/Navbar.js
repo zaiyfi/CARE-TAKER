@@ -35,7 +35,7 @@ const Navbar = () => {
   // Button Funtionality
   const handleClick = () => {
     // Determining the target URL based on the user's role
-    const targetUrl = auth.user.role === "User" ? "/dashboard" : "/admin";
+    const targetUrl = auth.user.role === "Admin" ? "/admin" : "/dashboard";
 
     navigate(targetUrl);
 

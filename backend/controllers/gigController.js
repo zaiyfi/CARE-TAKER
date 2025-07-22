@@ -99,7 +99,7 @@ const getUserGigs = async (req, res) => {
   }
 };
 
-// Updating the Products
+// Updating the Gig
 const updateGig = async (req, res) => {
   const { _id } = req.params;
   try {

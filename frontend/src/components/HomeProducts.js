@@ -29,6 +29,7 @@ const HomeProducts = () => {
   // // Fetching Products
   useEffect(() => {
     dispatch(setLoader(false));
+    // Fetching dynamic categories
     const dynamicCategory = async () => {
       const response = await fetch("/api/gigs/categories", {
         method: "GET",
@@ -85,7 +86,6 @@ const HomeProducts = () => {
           .toLowerCase()
           .includes(searchQuery.toLowerCase()))
   );
-  console.log(filteredProducts);
   return (
     <div>
       {/* Product Details header items */}
@@ -97,11 +97,10 @@ const HomeProducts = () => {
             placeholder="Search..."
             onChange={handleSearchQuery}
           />
-          <BsFillGrid3X3GapFill className=" border-2 border-gray-500 text-xl" />
         </div>
         <p className="f font-normal">
           <span className="f font-basic">{filteredProducts?.length}</span>{" "}
-          {filteredProducts?.length > 1 ? "Products" : "Product"} Available
+          {filteredProducts?.length > 1 ? "Gigs" : "Gig"} Available
         </p>
         <select className=" border-2 border-gray-500 outline-none p-1 cursor-pointer">
           <option value="">Products (Newest to Oldest)</option>
@@ -119,6 +118,7 @@ const HomeProducts = () => {
             >
               All
             </button>
+            {/* Dynamic Categories */}
             {dynamicCat &&
               dynamicCat?.map((cat) => (
                 <button

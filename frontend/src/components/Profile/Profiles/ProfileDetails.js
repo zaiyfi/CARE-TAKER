@@ -3,26 +3,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserGigs } from "../../../redux/userGigSlice"; // updated import
 import store from "../../../redux/store";
 import UserImgUpload from "./UserImgUpload";
-import FavProducts from "../Product/FavProducts"; // renamed from FavProducts
-import UserProducts from "./UserProducts"; // renamed from UserProducts
+import Caregiver from "./components/Caregiver";
 
-const ProfileDetails = ({ user, token, gigs }) => {
+const ProfileDetails = () => {
   const dispatch = useDispatch();
   const { auth } = useSelector((state) => state.auth);
   const { userGigs } = useSelector((state) => state.userGigs); // updated state
   const [gigLength, setGigLength] = useState("");
 
-  const isLoggedIn = auth.user === user._id;
+  const isLoggedIn = auth.user._id;
 
   // Fetching the userGigs
   useEffect(() => {
-    if (user._id === auth.user._id && !userGigs?.length > 0) {
+    // fetching the gigs only if the userGigs are empty
+    if (!userGigs?.length > 0) {
       const fetchGigs = async () => {
         try {
           const response = await fetch("/api/gigs/user-gigs", {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${auth.token}`,
             },
           });
           const json = await response.json();
@@ -39,14 +39,14 @@ const ProfileDetails = ({ user, token, gigs }) => {
       };
       fetchGigs();
     }
-  }, [dispatch, token, auth.user._id, user._id]);
+  }, [dispatch, auth.token, auth.user._id]);
 
   return (
     <div className="w-[90%] mx-auto md:w-[75%] flex justify-between md:mx-[5%] py-4">
       <div className="w-[17%]">
         <div className="round-img mb-6">
           <img
-            src={user.pic}
+            src={auth.user.pic}
             alt=""
             className="w-[200px] h-[200px] rounded-full mb-2"
           />
@@ -61,24 +61,10 @@ const ProfileDetails = ({ user, token, gigs }) => {
       </div>
       <div className="w-[73%]">
         <div className="border-b-2 pb-10">
-          <h2 className="text-4xl font-semibold w-full">{user.name}</h2>
-          <h2 className="text-base font-normal">{user.email}</h2>
+          <h2 className="text-4xl font-semibold w-full">{auth.user.name}</h2>
+          <h2 className="text-base font-normal">{auth.user.email}</h2>
         </div>
-        {isLoggedIn ? (
-          <FavProducts
-            gigs={gigs}
-            user={user}
-            token={token}
-            gigLength={(s) => setGigLength(s)}
-          />
-        ) : (
-          <UserProducts
-            user={user}
-            token={token}
-            products={gigs}
-            productLength={(s) => setGigLength(s)}
-          />
-        )}
+        <Caregiver auth={auth} userGigs={userGigs} />
       </div>
     </div>
   );

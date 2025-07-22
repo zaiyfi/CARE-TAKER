@@ -32,9 +32,10 @@ const ProductDetails = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${auth.token}`,
+          // Include the token for authentication
         },
         body: JSON.stringify({
-          userId: auth.user._id,
           sellerId: sellerId,
         }),
       });
@@ -58,7 +59,6 @@ const ProductDetails = () => {
     }
   };
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
   return (
     <div className="product-details">
       <div className=" m-2">

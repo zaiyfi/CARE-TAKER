@@ -10,7 +10,7 @@ const createToken = (_id) => {
 
 // Register Controller
 const register = async (req, res) => {
-  const { name, email, cellNo, password } = req.body;
+  const { name, email, cellNo, role, password } = req.body;
   let emptyFields = [];
   if (!name) {
     emptyFields.push("name");
@@ -27,7 +27,7 @@ const register = async (req, res) => {
       .json({ error: "Please fill in all the fields", emptyFields });
   }
   try {
-    await User.register(name, email, cellNo, password);
+    await User.register(name, email, cellNo, role, password);
     res.status(200);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -71,10 +71,10 @@ const getUser = async (req, res) => {
 };
 
 // Updating user status
-const updateStatus = async (req, res) => {
+const updateUser = async (req, res) => {
   const { user_id } = req.params;
   try {
-    console.log("function runs");
+    console.log("UPDATING USER " + user_id);
     const user = await User.findOneAndUpdate(
       { _id: user_id },
       { ...req.body },
@@ -84,53 +84,6 @@ const updateStatus = async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     res.status(404).json({ message: "User can't be found!" });
-  }
-};
-
-// update the user favProducts Array
-
-const addFavProduct = async (req, res) => {
-  const { user_id, product_id } = req.params;
-
-  try {
-    console.group("Add FaveProducts started!");
-    const product = await Product.findById(product_id);
-    if (!product) {
-      res.status(404).json("NO SUCH PRODUCT FOUND!");
-    }
-    const updatedUser = await User.findByIdAndUpdate(
-      user_id,
-      { $push: { favProducts: product_id } },
-      { new: true }
-    );
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    res
-      .status(400)
-      .json({ error: "Error while adding a product to favourites" });
-  }
-};
-
-// remove product from favProducts
-const removeFavProduct = async (req, res) => {
-  const { user_id, product_id } = req.params;
-
-  try {
-    const product = await Product.findById(product_id);
-    if (!product) {
-      res.status(404).json("NO SUCH PRODUCT FOUND!");
-    }
-    const updatedUser = await User.findByIdAndUpdate(
-      user_id,
-      { $pull: { favProducts: product_id } },
-      { new: true }
-    );
-    console.log(`Removing ProductId ${product_id} from userID ${user_id}`);
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    res
-      .status(400)
-      .json({ error: "Error while adding a product to favourites" });
   }
 };
 
@@ -161,20 +114,20 @@ const updateImg = async (req, res) => {
 
 // Adding products to users viewedProducts field and adding view to product
 const viewedProducts = async (req, res) => {
-  const { product_id, userId } = req.params;
+  const { product_id, user_id } = req.params;
 
   try {
-    const user = await User.findById(userId);
+    const user = await User.findById(user_id);
 
     if (!user.viewedProducts.includes(product_id)) {
-      const product = await Product.findByIdAndUpdate(
+      const gig = await Gig.findByIdAndUpdate(
         product_id,
         { $inc: { views: 1 } }, // Increment views by 1
         { new: true } // Return the updated document
       );
       console.log("product viewed");
 
-      if (!product) {
+      if (!gig) {
         res.status(404).json("Product Not Found!");
       }
 
@@ -182,10 +135,11 @@ const viewedProducts = async (req, res) => {
       await user.save();
       res.status(200).json("View Added");
     } else {
-      res.status(200).json("Product Already Viewed");
-      console.log("product already viewed!");
+      res.status(200).json("Gig Already Viewed");
+      console.log("Gig already viewed!");
     }
   } catch (error) {
+    console.error("Error in viewedProducts:", error);
     res.status(500).json("Internal Server Error!");
   }
 };
@@ -223,7 +177,12 @@ const getNearbyUsers = async (req, res) => {
   const { latitude, longitude } = req.body;
 
   try {
+    // Step 1: Find all user IDs who have created a gig
+    const gigCreators = await Gig.distinct("applicantId");
+
+    // Step 2: Query users within 5 km who are also gig creators
     const users = await User.find({
+      _id: { $in: gigCreators },
       location: {
         $near: {
           $geometry: {
@@ -233,9 +192,10 @@ const getNearbyUsers = async (req, res) => {
           $maxDistance: 5000, // 5 km
         },
       },
-    }).select("name location");
+    }).select("_id name role location");
 
     res.json({ users });
+    console.log("Nearby users fetched successfully:", users);
   } catch (err) {
     console.error("Geo query failed:", err);
     res.status(500).json({ message: "Failed to fetch nearby users" });
@@ -246,11 +206,9 @@ module.exports = {
   register,
   login,
   getUsers,
-  updateStatus,
+  updateUser,
   getUser,
-  addFavProduct,
   viewedProducts,
-  removeFavProduct,
   updateImg,
   updateUserLocation,
   getNearbyUsers,
