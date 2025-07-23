@@ -28,17 +28,15 @@ export const gigSlice = createSlice({
     //     // Add new product logic goes here if needed
     //   }
     // },
-    // setProductReview: (state, action) => {
-    //   const updatedProduct = action.payload;
-    //   const productIndex = state.products.findIndex(
-    //     (p) => p._id === updatedProduct._id
-    //   );
-    //   if (productIndex !== -1) {
-    //     state.products[productIndex].reviews = updatedProduct.reviews;
-    //   } else {
-    //     console.error("Product not found");
-    //   }
-    // },
+    setGigReview: (state, action) => {
+      const updatedGig = action.payload;
+      const gigIndex = state.gigs.findIndex((g) => g._id === updateGig._id);
+      if (gigIndex !== -1) {
+        state.gigs[gigIndex].reviews = updatedGig.reviews;
+      } else {
+        console.error("Gig not found");
+      }
+    },
     updateGig: (state, action) => {
       const updatedGig = action.payload;
       const gigIndex = state.gigs.findIndex((g) => g._id === updatedGig._id);
@@ -53,7 +51,7 @@ export const {
   deleteGig,
   createProduct,
   setProductImage,
-  setProductReview,
+  setGigReview,
   setProductStatus,
   updateGig,
   addGig,

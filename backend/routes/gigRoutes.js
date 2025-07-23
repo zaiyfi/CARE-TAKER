@@ -28,7 +28,7 @@ router.post(
 );
 
 router.patch("/update/:_id", requireAuth, updateGig);
-// router.patch("/addReview/:productId", requireAuth, addReview);
+router.patch("/addReview/:gigId", requireAuth, addReview);
 
 // // Get Single/All Products
 router.get("/get-gigs", getGigs);

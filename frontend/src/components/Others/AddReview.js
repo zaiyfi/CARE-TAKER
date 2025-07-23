@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setProductReview } from "../../redux/gigSlice";
+import { setGigReview } from "../../redux/gigSlice";
 
 const AddReview = ({ IoStar, productId, setAddReview }) => {
   const [rating, setRating] = useState(null);
@@ -12,7 +12,7 @@ const AddReview = ({ IoStar, productId, setAddReview }) => {
 
   const addReview = async () => {
     console.log({ user: auth.user._id, comment, rating });
-    const res = await fetch(`/api/products/addReview/${productId}`, {
+    const res = await fetch(`/api/gigs/addReview/${productId}`, {
       method: "PATCH",
       body: JSON.stringify({ user: auth.user._id, comment, rating }),
       headers: {
@@ -22,7 +22,7 @@ const AddReview = ({ IoStar, productId, setAddReview }) => {
     });
     const json = await res.json();
     if (res.ok) {
-      dispatch(setProductReview(json));
+      dispatch(setGigReview(json));
       console.log("review added!");
       setAddReview(false);
     } else {

@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { setUserCity } from "../../../../redux/authSlice";
 import { useDispatch } from "react-redux";
 import store from "../../../../redux/store";
+import VerificationForm from "./VerificationForm";
 
 const Caregiver = ({ auth, userGigs }) => {
   const dispatch = useDispatch();
 
   const [cityName, setCityName] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const gigCategory =
     userGigs?.length > 0 ? userGigs[0].category : "No Category";
   const user = auth.user;
@@ -69,7 +71,9 @@ const Caregiver = ({ auth, userGigs }) => {
     fetchCityNameAndUpdate();
   }, []);
 
-  const openVerificationModal = () => {};
+  const openVerificationModal = () => {
+    setShowModal(true);
+  };
 
   return (
     <div>
@@ -103,6 +107,12 @@ const Caregiver = ({ auth, userGigs }) => {
               Verify Now
             </button>
           </div>
+          {showModal && (
+            <VerificationForm
+              token={token}
+              onClose={() => setShowModal(false)}
+            />
+          )}
         </div>
       )}
     </div>

@@ -158,34 +158,34 @@ const deleteProductImage = async (req, res) => {
   }
 };
 
-// Adding reviews to products
+// Adding reviews to Gig
 const addReview = async (req, res) => {
   const { user, comment, rating } = req.body;
-  const { productId } = req.params;
+  const { gigId } = req.params;
 
   try {
-    console.log(productId);
+    console.log(gigId);
     console.log({ user, comment, rating });
 
-    const product = await Product.findById(productId);
+    const gig = await Gig.findById(gigId);
 
-    if (!product) {
+    if (!gig) {
       return res.status(404).json({ error: "Product not found" });
     }
 
     // Add the review to the product's reviews array
-    product.reviews.push({ user, comment, rating });
+    gig.reviews.push({ user, comment, rating });
 
     // Save the updated product
-    await product.save();
+    await gig.save();
 
-    await product.populate({
+    await gig.populate({
       path: "reviews.user",
       model: "User",
       select: "name pic",
     });
 
-    res.status(201).json(product);
+    res.status(201).json(gig);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

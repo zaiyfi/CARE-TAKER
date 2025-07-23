@@ -21,13 +21,6 @@ const Products = () => {
         productId={productId}
       />
       <GetLocation />
-      {/* Chat feature toggle button */}
-      <button onClick={() => setShowChat(!showChat)}>
-        {showChat ? "Hide Chat" : "Show Chat"}
-      </button>
-      {/* Conditionally rendering the ChatWindow */}
-      {showChat && <ChatWindow />}
-      {/* End */}
     </div>
   );
 };

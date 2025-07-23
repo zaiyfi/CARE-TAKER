@@ -1,15 +1,10 @@
 // React and Redux Hooks
-import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { setLoader } from "../redux/loaderSlice";
-import { setProducts } from "../redux/gigSlice";
 
 // Other Modules
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import store from "../redux/store";
 import SellerDetails from "../components/SellerDetails";
-import { setViewedProducts } from "../redux/authSlice";
 import ProductInfo from "../components/Others/ProductInfo";
 import ProductReviews from "../components/Others/ProductReviews";
 
@@ -72,7 +67,7 @@ const ProductDetails = () => {
                   {product.image ? (
                     <img
                       src={product.image}
-                      className="object-cover w-full h-96 rounded-md"
+                      className="object-cover w-full h-[500px] rounded-md"
                       alt=""
                     />
                   ) : (

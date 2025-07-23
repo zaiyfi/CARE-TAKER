@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const gigRoutes = require("./routes/gigRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const verificationRoutes = require("./routes/verificationRoutes");
 
 const http = require("http");
 const cors = require("cors");
@@ -35,6 +36,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/gigs", gigRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/verify", verificationRoutes);
 
 // Setup server and socket
 const server = http.createServer(app);

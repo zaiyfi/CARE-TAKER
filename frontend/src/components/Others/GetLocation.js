@@ -30,9 +30,7 @@ const GetLocation = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Your Current Location</h2>
-
+    <div className="mt-4">
       {location.latitude && location.longitude ? (
         <MapContainer
           center={[location.latitude, location.longitude]}
