@@ -10,6 +10,7 @@ module.exports = {
         primary: "#e10990",
         lightPrimary: "#f340ae",
         secondary: "#ff74ca",
+        lightSecondary: "#ffe0f2",
         purpleColor: "#9771FF",
         irisBlueColor: "#01B5C5",
         headingColor: "#181A1E",

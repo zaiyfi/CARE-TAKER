@@ -22,6 +22,8 @@ const Users = () => {
   const [userId, setUserId] = useState(null);
   const [updated, setUpdated] = useState(false);
   const [error, setError] = useState(null);
+  const [roleFilter, setRoleFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   // Updateing user Status
   const handleUpdate = async () => {
@@ -50,8 +52,9 @@ const Users = () => {
 
   //   Fetching all users data
   useEffect(() => {
-    dispatch(setLoader(true));
     const fetchUsers = async () => {
+      dispatch(setLoader(true));
+
       const response = await fetch("/api/auth/users", {
         method: "GET",
         headers: {
@@ -65,7 +68,9 @@ const Users = () => {
       }
       dispatch(setLoader(false));
     };
-    fetchUsers();
+    if (users.length === 0) {
+      fetchUsers();
+    }
   }, [dispatch, auth]);
 
   //   JSX start
@@ -85,83 +90,118 @@ const Users = () => {
       )}
       {/* Setting up the table to display users */}
       <div className="flex flex-col mx-4 overflow-hidden">
-        <div className="sm:-mx-6 lg:-mx-4">
-          <div className="inline-block md:w-full py-2 sm:px-6 lg:px-8 ">
-            <div className="overflow-hidden">
-              <table className="min-w-full text-center text-sm font-light">
-                <thead className="border-b font-medium  text-white dark:border-neutral-500 dark:bg-neutral-900">
-                  <tr>
-                    <th scope="col" className=" px-6 py-4">
-                      Name
-                    </th>
-                    <th scope="col" className=" px-6 py-4">
-                      Role
-                    </th>
-                    <th scope="col" className=" px-6 py-4">
-                      Status
-                    </th>
-                    <th scope="col" className=" px-6 py-4">
-                      Added
-                    </th>
-                    <th scope="col" className=" px-6 py-4">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                {/* Displaying the Fetched users */}
-                {users &&
-                  users.length > 0 &&
-                  users
-                    .filter((user) => user.role !== "Admin")
-                    .map((user) => (
-                      <tbody key={user._id}>
-                        <tr className="border-b dark:border-neutral-500">
-                          <td className="whitespace-nowrap  px-6 py-4">
-                            {user.name}
-                          </td>
-
-                          <td className="whitespace-nowrap  px-6 py-4">
-                            {user.role}
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4">
-                            {user.status}
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4">
-                            {formatDistanceToNow(new Date(user.createdAt), {
-                              addSuffix: true,
-                            })}
-                          </td>
-                          <td className="whitespace-nowrap flex gap-1 px-6 py-4 justify-center ">
-                            <button
-                              value={
-                                user.status === "Active" ? "Blocked" : "Active"
-                              }
-                              onClick={(e) => {
-                                setStatus(e.target.value);
-                                setUserId(user._id);
-                              }}
-                            >
-                              {user.status === "Active" ? "Block" : "UnBlock"}
-                            </button>
-
-                            {user._id === userId && (
-                              <button className="submit" onClick={handleUpdate}>
-                                Update
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      </tbody>
-                    ))}
-              </table>
-              {!users && (
-                <div className="r p-6 text-lg font-bold">
-                  <h1 className="text-center">No users!</h1>
-                </div>
-              )}
-            </div>
+        {/*                                    Filters to display Users                  */}
+        <div className="flex items-center gap-4 mb-4 px-4">
+          <div className="flex items-center gap-4 mb-4 px-4">
+            <label htmlFor="roleFilter" className="text-sm font-medium">
+              Filter by Role:
+            </label>
+            <select
+              id="roleFilter"
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+            >
+              <option value="All">All</option>
+              <option value="Client">Client</option>
+              <option value="Caregiver">Caregiver</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-4 mb-4 px-4">
+            <label htmlFor="statusFilter" className="text-sm font-medium">
+              Filter by status:
+            </label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+            >
+              <option value="All">All Statuses</option>
+              <option value="Active">Active</option>
+              <option value="Blocked">Blocked</option>
+              <option value="Pending">Pending</option>
+            </select>
           </div>
         </div>
+        {/* USERS GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mx-4 mt-4">
+          {users &&
+            users
+              .filter((user) => user.role !== "Admin")
+              .filter((user) =>
+                roleFilter === "All" ? true : user.role === roleFilter
+              )
+              .filter((user) =>
+                statusFilter === "All" ? true : user.status === statusFilter
+              )
+              .map((user) => (
+                <div
+                  key={user._id}
+                  className="bg-white shadow-md rounded-xl p-4 border border-gray-200"
+                >
+                  <div className="mb-2">
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      {user.name}
+                    </h2>
+                    <p className="text-sm text-gray-600">{user.role}</p>
+                    <p className="text-sm text-gray-600">{user.email}</p>
+                  </div>
+                  <div className="mb-2">
+                    <p className="text-sm">
+                      <span className="font-medium">Status:</span>{" "}
+                      <span
+                        className={`${
+                          user.status === "Active"
+                            ? "text-green-600"
+                            : "text-red-600"
+                        } font-semibold`}
+                      >
+                        {user.status}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Joined{" "}
+                      {formatDistanceToNow(new Date(user.createdAt), {
+                        addSuffix: true,
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      value={user.status === "Active" ? "Blocked" : "Active"}
+                      onClick={(e) => {
+                        setStatus(e.target.value);
+                        setUserId(user._id);
+                      }}
+                      className={`px-3 py-1 text-xs text-white rounded ${
+                        user.status === "Active"
+                          ? "bg-red-500 hover:bg-red-600"
+                          : "bg-green-500 hover:bg-green-600"
+                      }`}
+                    >
+                      {user.status === "Active" ? "Block" : "Unblock"}
+                    </button>
+
+                    {user._id === userId && (
+                      <button
+                        className="px-3 py-1 text-xs text-white bg-blue-500 hover:bg-blue-600 rounded"
+                        onClick={handleUpdate}
+                      >
+                        Update
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+        </div>
+
+        {/* NO USERS FOUND */}
+        {(!users || users.length === 0) && (
+          <div className="p-6 text-lg font-bold text-center text-gray-700">
+            No users found.
+          </div>
+        )}
       </div>
       {/* Table END */}
     </div>

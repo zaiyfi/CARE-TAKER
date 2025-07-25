@@ -1,5 +1,5 @@
 // Component
-import AdminTable from "./AdminTable";
+import AdminTable from "./Components/AdminTable";
 
 const Products = () => {
   return (

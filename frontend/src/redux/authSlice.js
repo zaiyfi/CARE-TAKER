@@ -88,11 +88,32 @@ export const authSlice = createSlice({
         };
       }
     },
+    setVerificationInfo: (state, action) => {
+      if (state.auth && state.auth.user) {
+        state.auth = {
+          ...state.auth,
+          user: {
+            ...state.auth.user,
+            verificationInfo: action.payload,
+          },
+        };
+      }
+    },
+    setUpdatedVerification: (state, action) => {
+      if (state.auth?.user?.verificationInfo) {
+        state.auth.user.verificationInfo = {
+          ...state.auth.user.verificationInfo,
+          ...action.payload,
+        };
+      }
+    },
   },
 });
 export const {
   setUser,
   setViewedProducts,
+  setVerificationInfo,
+  setUpdatedVerification,
   // setFavProducts,
   // setRemoveFavProducts,
   setUserCity,

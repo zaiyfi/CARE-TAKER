@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
-import MappingRow from "./MappingRow";
-import { setGigs } from "../../redux/gigSlice";
+import { setLoader } from "../../../redux/loaderSlice";
+import { setGigs } from "../../../redux/gigSlice";
+import store from "../../../redux/store";
 import { useEffect } from "react";
-import { setLoader } from "../../redux/loaderSlice";
-import store from "../../redux/store";
+import MappingCard from "./MappingCard";
 
 const AdminTable = () => {
   const { gigs } = useSelector((state) => state.gigs);
@@ -47,35 +47,17 @@ const AdminTable = () => {
       <div className="w-[100%]  flex flex-col">
         <div className="sm:-mx-6 lg:-mx-4">
           <div className="inline-block md:w-full py-2 sm:px-6 lg:px-8 ">
-            <div className="">
-              <table className="min-w-full text-center text-sm font-light">
-                <thead className="border-b font-medium  text-white dark:border-neutral-500 ">
-                  <tr>
-                    <th scope="col" className=" px-6 py-4">
-                      User Name
-                    </th>
-                    <th scope="col" className=" px-6 py-4">
-                      Title
-                    </th>
+            {/* GIG CARDS GRID */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+              {gigs &&
+                gigs.length > 0 &&
+                gigs.map((gig) => (
+                  <MappingCard key={gig._id} product={gig} auth={auth} />
+                ))}
 
-                    <th scope="col" className=" px-6 py-4">
-                      Status
-                    </th>
-
-                    <th scope="col" className=" px-6 py-4">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                {/* Displaying the Fetched Products */}
-                {gigs &&
-                  gigs?.map((gig) => <MappingRow product={gig} auth={auth} />)}
-                {/* Table End */}
-              </table>
-
-              {!gigs && (
-                <div className="r p-6 text-lg font-bold">
-                  <h1 className="text-center">No Products!</h1>
+              {(!gigs || gigs.length === 0) && (
+                <div className="p-6 text-lg font-bold text-center text-gray-700">
+                  No Products!
                 </div>
               )}
             </div>

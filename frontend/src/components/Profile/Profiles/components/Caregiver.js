@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { setUserCity } from "../../../../redux/authSlice";
+import { setUserCity, setVerificationInfo } from "../../../../redux/authSlice";
 import { useDispatch } from "react-redux";
 import store from "../../../../redux/store";
 import VerificationForm from "./VerificationForm";
@@ -9,6 +9,16 @@ const Caregiver = ({ auth, userGigs }) => {
 
   const [cityName, setCityName] = useState("");
   const [showModal, setShowModal] = useState(false);
+
+  const [editMode, setEditMode] = useState(false);
+  const [editingData, setEditingData] = useState(null);
+
+  const handleEdit = () => {
+    setEditingData(user.verificationInfo);
+    setEditMode(true);
+    setShowModal(true);
+  };
+
   const gigCategory =
     userGigs?.length > 0 ? userGigs[0].category : "No Category";
   const user = auth.user;
@@ -68,6 +78,30 @@ const Caregiver = ({ auth, userGigs }) => {
       }
     };
 
+    const fetchVerificationInfo = async () => {
+      try {
+        const res = await fetch("/api/verify/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        if (res.ok) {
+          console.log("Verification data fetched successfully:", data);
+          dispatch(setVerificationInfo(data));
+          console.log(store.getState());
+        } else {
+          console.warn("No verification data found.");
+        }
+      } catch (err) {
+        console.error("Error fetching verification info", err);
+      }
+    };
+
+    if (user.role === "Caregiver" && !user.verificationInfo) {
+      fetchVerificationInfo();
+    }
+
     fetchCityNameAndUpdate();
   }, []);
 
@@ -81,9 +115,38 @@ const Caregiver = ({ auth, userGigs }) => {
         <div className="mt-6 space-y-4 text-gray-700">
           <div>
             <h3 className="text-xl font-semibold">ID Card</h3>
-            <p className="text-sm mt-1">
-              {user.about || "No ID provided yet."}
-            </p>
+            <div className="flex flex-col sm:flex-row gap-4 mt-2">
+              {user.verificationInfo?.cnicFront ? (
+                <img
+                  src={user.verificationInfo.cnicFront}
+                  alt="CNIC Front"
+                  className="w-32 h-20 object-cover rounded"
+                />
+              ) : (
+                <p className="text-sm">No ID Card provided yet.</p>
+              )}
+              {user.verificationInfo?.cnicBack ? (
+                <img
+                  src={user.verificationInfo.cnicBack}
+                  alt="CNIC Back"
+                  className="w-32 h-20 object-cover rounded"
+                />
+              ) : (
+                <p className="text-sm">No ID Card provided yet.</p>
+              )}
+            </div>
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold">Selfie with CNIC</h3>
+            {user.verificationInfo?.selfieWithCnic ? (
+              <img
+                src={user.verificationInfo.selfieWithCnic}
+                alt="selfie with CNIC"
+                className="w-32 h-20 object-cover rounded"
+              />
+            ) : (
+              <p className="text-sm">No Selfie provided yet.</p>
+            )}
           </div>
           <div>
             <h3 className="text-xl font-semibold">{gigCategory} Certificate</h3>
@@ -92,25 +155,57 @@ const Caregiver = ({ auth, userGigs }) => {
             </p>
           </div>
           <div>
+            <h3 className="text-xl font-semibold">Verification Status</h3>
+            <p className="text-sm mt-1">
+              <span className=" font-medium">
+                {user.verificationInfo.status + "!" || "Not Verified!"}
+              </span>{" "}
+              {user.verificationInfo.status === "Pending"
+                ? "Waiting for admin approval."
+                : user.verificationInfo.status === "Rejected"
+                ? "Please resubmit your documents."
+                : "Apply for verification to get started."}
+            </p>
+          </div>
+
+          <div>
             <h3 className="text-xl font-semibold">Location</h3>
             <p className="text-sm mt-1">{user.city || "Not specified"}</p>
           </div>
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 p-3 rounded mb-4">
-            <p className="text-sm">
-              Get verified to build trust and increase your chances of getting
-              hired.
-            </p>
+
+          {!user.verificationInfo && (
+            <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 p-3 rounded mb-4">
+              <p className="text-sm">
+                Get verified to build trust and increase your chances of getting
+                hired.
+              </p>
+              <button
+                className="mt-2 px-3 py-1 text-sm bg-secondary hover:bg-lightPrimary text-white rounded"
+                onClick={openVerificationModal}
+              >
+                Verify Now
+              </button>
+            </div>
+          )}
+          {user.verificationInfo && (
             <button
-              className="mt-2 px-3 py-1 text-sm bg-secondary hover:bg-lightPrimary text-white rounded"
-              onClick={openVerificationModal}
+              onClick={handleEdit}
+              className="mt-3 px-3 py-1 text-sm bg-lightPrimary hover:bg-secondary text-white rounded"
             >
-              Verify Now
+              Edit Verification
             </button>
-          </div>
+          )}
           {showModal && (
             <VerificationForm
               token={token}
-              onClose={() => setShowModal(false)}
+              onClose={() => {
+                setShowModal(false);
+                setEditMode(false);
+                setEditingData(null);
+              }}
+              dispatch={dispatch}
+              isEdit={editMode}
+              existingData={editingData}
             />
           )}
         </div>
