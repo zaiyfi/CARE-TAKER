@@ -8,6 +8,7 @@ import { IoIosLogOut } from "react-icons/io";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { SiGnuprivacyguard } from "react-icons/si";
 import { FaRegUserCircle } from "react-icons/fa";
+import { MdHealthAndSafety } from "react-icons/md";
 
 import { useState } from "react";
 import { setProducts } from "../redux/gigSlice";
@@ -50,8 +51,15 @@ const Navbar = () => {
           path === "/dashboard" && " shadow-none drop-shadow-none "
         }  flex justify-between py-4 px-6 items-center`}
       >
-        <Link className={`logo text-xl font-bold`} to="/">
-          MarketPlace
+        <Link
+          className={`logo text-xl font-bold text-primary flex items-center`}
+          to="/"
+        >
+          C
+          <span className="">
+            <MdHealthAndSafety className=" text-3xl" />
+          </span>
+          Connect
         </Link>
 
         {/* Show this if user is logged in */}

@@ -1,7 +1,7 @@
 // React/Redux Hooks and React Router
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Pages
 import Home from "./pages/Home";
@@ -32,6 +32,7 @@ import UnprotectedRoute from "./components/Others/UnprotectedRoute";
 
 // Socket.io client
 import socket from "./socket";
+import HomePage from "./pages/HomePage";
 
 function App() {
   // Getting the state of loader
@@ -60,9 +61,32 @@ function App() {
         {loading && <LoaderSpinner />}
         <Navbar />
         <Routes>
-          <Route path={"/"} element={<Home />} />
-          <Route path={"/product/:productId"} element={<ProductDetails />} />
-          <Route path="/near-me" element={<NearMeMap />} />
+          <Route path="/home" element={<HomePage />} />
+
+          <Route
+            path={"/"}
+            element={
+              <ProtectedLogin>
+                <Home />
+              </ProtectedLogin>
+            }
+          />
+          <Route
+            path={"/product/:productId"}
+            element={
+              <ProtectedLogin>
+                <ProductDetails />
+              </ProtectedLogin>
+            }
+          />
+          <Route
+            path="/near-me"
+            element={
+              <ProtectedLogin>
+                <NearMeMap />
+              </ProtectedLogin>
+            }
+          />
 
           <Route
             path="/dashboard"

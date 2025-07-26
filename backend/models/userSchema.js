@@ -47,6 +47,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "Active",
     },
+
+    verificationStatus: {
+      type: String,
+      default: "Pending",
+      enum: ["Pending", "Approved", "Rejected"],
+    },
     role: {
       type: String,
       default: "Client",

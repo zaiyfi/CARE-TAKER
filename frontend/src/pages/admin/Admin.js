@@ -30,7 +30,7 @@ const Admin = () => {
           onClick={() => tabActiveIndex(1)}
         >
           <PiPackageFill className="text-lg" />
-          <span>Products</span>
+          <span>Gigs</span>
         </div>
 
         <div

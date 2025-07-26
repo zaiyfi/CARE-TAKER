@@ -158,13 +158,13 @@ const Caregiver = ({ auth, userGigs }) => {
             <h3 className="text-xl font-semibold">Verification Status</h3>
             <p className="text-sm mt-1">
               <span className=" font-medium">
-                {user.verificationInfo.status + "!" || "Not Verified!"}
+                {user.verificationStatus + "!" || "Not Verified!"}
               </span>{" "}
-              {user.verificationInfo.status === "Pending"
+              {user.verificationStatus === "Pending"
                 ? "Waiting for admin approval."
-                : user.verificationInfo.status === "Rejected"
+                : user.verificationStatus === "Rejected"
                 ? "Please resubmit your documents."
-                : "Apply for verification to get started."}
+                : "Congratulations. You are verified!"}
             </p>
           </div>
 
@@ -180,7 +180,7 @@ const Caregiver = ({ auth, userGigs }) => {
                 hired.
               </p>
               <button
-                className="mt-2 px-3 py-1 text-sm bg-secondary hover:bg-lightPrimary text-white rounded"
+                className="mt-2 px-3 py-1 text-sm bg-primary hover:bg-lightPrimary text-white rounded"
                 onClick={openVerificationModal}
               >
                 Verify Now
@@ -190,7 +190,7 @@ const Caregiver = ({ auth, userGigs }) => {
           {user.verificationInfo && (
             <button
               onClick={handleEdit}
-              className="mt-3 px-3 py-1 text-sm bg-lightPrimary hover:bg-secondary text-white rounded"
+              className="mt-3 px-3 py-1 text-sm bg-primary hover:bg-lightPrimary  text-white rounded"
             >
               Edit Verification
             </button>

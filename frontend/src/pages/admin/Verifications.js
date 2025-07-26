@@ -51,7 +51,7 @@ const Verifications = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${auth.token}`,
         },
-        body: JSON.stringify({ verificationStatus: status }),
+        body: JSON.stringify({ status }),
       });
 
       const data = await res.json();
@@ -99,7 +99,7 @@ const Verifications = () => {
                 <p className="text-sm text-gray-700 font-medium">
                   Status:{" "}
                   <span className="text-yellow-600 font-semibold">
-                    {v.verificationStatus}
+                    {v.status}
                   </span>
                 </p>
               </div>

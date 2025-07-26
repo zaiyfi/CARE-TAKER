@@ -1,4 +1,6 @@
 const Verification = require("../models/verificationSchema");
+const User = require("../models/userSchema");
+
 const cloudinary = require("../cloudinaryConfig");
 
 const submitVerification = async (req, res) => {
@@ -181,8 +183,16 @@ const updateVerificationStatus = async (req, res) => {
     if (!updated) {
       return res.status(404).json({ error: "Verification not found" });
     }
-
-    res.status(200).json({ message: `Verification ${status}`, updated });
+    if (updated) {
+      await User.findByIdAndUpdate(
+        updated.user,
+        { verificationStatus: status },
+        { new: true }
+      );
+      return res
+        .status(200)
+        .json({ message: `Verification ${status}`, updated });
+    }
   } catch (err) {
     console.error("Update error:", err);
     res.status(500).json({ error: "Server error" });

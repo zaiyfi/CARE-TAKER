@@ -24,11 +24,11 @@ const MessageInput = ({ onSendMessage }) => {
         onChange={(e) => setMessage(e.target.value)}
         onKeyPress={handleKeyPress}
         placeholder="Type your message..."
-        className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
+        className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
       />
       <button
         onClick={handleSend}
-        className=" bg-secondary text-white px-4 py-2 rounded-full hover:bg-primary transition"
+        className=" bg-primary text-white px-4 py-2 rounded-full hover:bg-lightPrimary transition"
       >
         Send
       </button>

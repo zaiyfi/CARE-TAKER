@@ -47,7 +47,7 @@ const UserImgUpload = ({ auth }) => {
       />
       <label
         htmlFor="profile-pic"
-        className="cursor-pointer inline-block px-4 py-2 bg-secondary text-white rounded hover:bg-lightPrimary text-sm"
+        className="cursor-pointer inline-block px-4 py-2 bg-primary hover:bg-lightPrimary  text-white rounded text-sm"
       >
         Edit Profile Picture
       </label>

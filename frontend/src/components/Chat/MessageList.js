@@ -21,7 +21,7 @@ const MessageList = ({ messages, thisUserId }) => {
           <div
             className={`rounded-lg px-4 py-2 text-sm max-w-[75%] ${
               message.receiverId !== thisUserId
-                ? "bg-lightPrimary text-white"
+                ? "bg-primary text-white"
                 : "bg-gray-200 text-gray-800"
             }`}
           >
