@@ -369,7 +369,7 @@ const GigForm = () => {
 
             <button
               type="submit"
-              className="w-full bg-secondary text-white p-2 rounded hover:bg-primary transition-all"
+              className="w-full bg-primary text-white p-2 rounded hover:bg-lightPrimary transition-all"
             >
               Submit Application
             </button>

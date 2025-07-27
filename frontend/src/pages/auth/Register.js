@@ -4,7 +4,9 @@ import { BiErrorCircle } from "react-icons/bi";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [countryCode, setCountryCode] = useState("+92");
 
+  // Form states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [cellNo, setCellNo] = useState("");
@@ -16,145 +18,187 @@ const Register = () => {
     e.preventDefault();
     setError(null);
 
-    const registerData = { name, email, cellNo, password, role };
+    if (countryCode === "+92" && cellNo.length !== 10) {
+      setError("Pakistan numbers must be exactly 10 digits.");
+      return;
+    }
 
-    const response = await fetch("/api/auth/register", {
-      body: JSON.stringify(registerData),
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const registerData = {
+      name,
+      email,
+      cellNo: `${countryCode}${cellNo}`, // combine if needed
+      password,
+      role,
+    };
 
-    const json = await response.json();
-    console.log("Registration response:", json);
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(registerData),
+      });
 
-    if (response.ok) {
-      console.log("Registration successful:", json);
-      //  Reset fields before navigating
+      const json = await response.json();
+      console.log("Full Response JSON:", json);
+      console.log("Status Code:", response.status);
+
+      if (!response.ok) {
+        setError(json.error || "Registration failed");
+        return;
+      }
+
+      // ✅ Success path
+      console.log("Registration successful");
+
+      // Reset fields
       setName("");
       setEmail("");
       setPassword("");
       setCellNo("");
       setRole("");
 
-      //  Navigate after clearing fields
+      // Navigate
       navigate("/login");
-    }
-
-    if (!response.ok) {
-      setError(json.error || "Registration failed");
-      return; // stop here if error occurred
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError("An error occurred. Please try again.");
     }
   };
 
   return (
-    <div>
-      {error && (
-        <div className="error-backend flex border-2 border-red-500 bg-white p-2 rounded mb-4">
-          <BiErrorCircle className=" text-red-500 mx-1 text-lg mt-0.5" />
-          <p className="text-black">{error}</p>
-        </div>
-      )}
+    <div className="flex items-center justify-center h-full px-4">
+      <div className="bg-white shadow-2xl rounded-2xl w-full max-w-2xl  p-8 my-8">
+        {error && (
+          <div className="flex items-start bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <BiErrorCircle className="text-xl mt-0.5 mr-2" />
+            <p>{error}</p>
+          </div>
+        )}
 
-      <form className="form w-full max-w-lg" onSubmit={handleSubmit}>
-        <h2 className="text-xl font-bold mb-4">Register</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-800 text-center">
+            Create an Account
+          </h2>
 
-        {/* Name and Email */}
-        <div className="flex flex-wrap -mx-3 mb-6">
-          {/* Name */}
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              Name
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="John Doe"
-            />
+          {/* Name and Email */}
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="w-full">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+            </div>
+            <div className="w-full">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="example12@gmail.com"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+            </div>
           </div>
 
-          {/* Email */}
-          <div className="w-full md:w-1/2 px-3">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              Email
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-primary"
-              type="email"
-              placeholder="example12@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Cell No */}
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full px-3">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+          {/* Cell No */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Cell No
             </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              type="text"
-              value={cellNo}
-              onChange={(e) => setCellNo(e.target.value)}
-              placeholder="+1 123 4567 890"
-            />
-          </div>
-        </div>
+            <div className="flex gap-2">
+              {/* Country Code Dropdown */}
+              <select
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              >
+                <option value="+92">+92</option>
+                <option value="+1">+1</option>
+                <option value="+44">+44</option>
+                {/* Add more if needed */}
+              </select>
 
-        {/* Password */}
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full px-3">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+              {/* Mobile Number Input */}
+              <input
+                type="text"
+                value={cellNo}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Allow only digits
+                  if (/^\d*$/.test(value)) {
+                    setCellNo(value);
+                  }
+                }}
+                maxLength={10}
+                placeholder="3001234567"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+            </div>
+            {/* Optional: Validation Message */}
+            {cellNo.length > 0 && cellNo.length !== 10 && (
+              <p className="text-red-500 text-sm mt-1">
+                Number must be 10 digits
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-primary"
               type="password"
-              placeholder="******************"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••••••••••"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
-        </div>
 
-        {/* Role */}
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full px-3">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+          {/* Role */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Role
             </label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 focus:outline-none focus:bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             >
-              <option value="">Choose your role</option>
+              <option value="">Select your role</option>
               <option value="Client">Service Seeker (Client)</option>
               <option value="Caregiver">Service Provider (Caregiver)</option>
             </select>
           </div>
-        </div>
 
-        {/* Submit */}
-        <input
-          className="button border-slate-400"
-          type="submit"
-          value="Register"
-        />
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full bg-primary hover:bg-lightPrimary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition duration-200"
+          >
+            Register
+          </button>
 
-        <p className="mt-2 text-center text-slate-700">
-          Already have an account?{" "}
-          <Link className="text-black underline font-semibold" to="/login">
-            Login
-          </Link>
-        </p>
-      </form>
+          <p className="text-center text-gray-600">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="text-primary hover:underline font-medium"
+            >
+              Login
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

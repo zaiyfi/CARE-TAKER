@@ -57,7 +57,7 @@ function App() {
   // Routing
   return (
     <BrowserRouter>
-      <div className="App">
+      <div className="App bg-gray-100 min-h-screen">
         {loading && <LoaderSpinner />}
         <Navbar />
         <Routes>

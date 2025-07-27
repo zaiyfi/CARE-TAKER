@@ -18,75 +18,92 @@ const Login = () => {
   };
 
   return (
-    <div>
-      {error && (
-        <div className="error-backend flex border-2 border-red-500 bg-white p-2 rounded">
-          <BiErrorCircle className=" text-red-500 mx-1 text-lg mt-0.5" />
-          <p className="text-black">{error}</p>
-        </div>
-      )}
-      {/* 
-      {loggedIn && (
-        <div className="error-backend flex border-2 border-green-500 bg-white p-2 rounded">
-          <GrStatusGood className=" text-green-500 mx-1 text-lg mt-0.5" />
-          <p className="text-black">User Logged in Successfully</p>
-        </div>
-      )} */}
-      <form className="form w-full max-w-lg" onSubmit={handleSubmit}>
-        <h2 className="text-primary">Login</h2>
-        <div className="mb-2 flex justify-between">
-          <div>
-            <h3 className="font-bold text-base">Admin:</h3>
-            <p>siraj12@gmail.com</p>
-            <p>siraj12#G</p>
+    <div className="flex items-center justify-center h-full px-4 my-10">
+      <div className="w-full max-w-xl bg-white p-8 rounded-2xl shadow-2xl">
+        {/* Error Message */}
+        {error && (
+          <div className="flex items-start bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <BiErrorCircle className="text-xl mr-2 mt-0.5" />
+            <p>{error}</p>
           </div>
-          <div>
-            <h3 className="font-bold text-base">User:</h3>
-            <p>example12@gmail.com</p>
-            <p>example12#G</p>
+        )}
+
+        {/* Optional: Success Message */}
+        {/* {loggedIn && (
+          <div className="flex items-start bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            <GrStatusGood className="text-xl mr-2 mt-0.5" />
+            <p>User Logged in Successfully</p>
+          </div>
+        )} */}
+
+        {/* Title */}
+        <h2 className="text-2xl font-bold text-center text-primary mb-4">
+          Login
+        </h2>
+
+        {/* Dummy Credentials */}
+        <div className="mb-6 text-sm text-gray-700 grid grid-cols-2 gap-4">
+          <div className="bg-gray-50 p-2 rounded border">
+            <h3 className="font-semibold">Admin:</h3>
+            <p className="text-xs">siraj12@gmail.com</p>
+            <p className="text-xs">siraj12#G</p>
+          </div>
+          <div className="bg-gray-50 p-2 rounded border">
+            <h3 className="font-semibold">User:</h3>
+            <p className="text-xs">example12@gmail.com</p>
+            <p className="text-xs">example12#G</p>
           </div>
         </div>
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full px-3">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white f"
               type="email"
               placeholder="example12@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
-        </div>
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full px-3">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white f"
               type="password"
-              placeholder="******************"
+              placeholder="••••••••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
-        </div>
-        <input
-          className="button"
-          disabled={loading}
-          type="submit"
-          value={loading ? "Loging in..." : "Login"}
-        />
-        <p className="m mt-2 text-center text-slate-700">
-          Already have an account?{" "}
-          <Link className="text-black underline font-semibold " to="/register">
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition duration-200 disabled:opacity-60"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-primary hover:underline font-medium"
+          >
             Register
           </Link>
         </p>
-      </form>
+      </div>
     </div>
   );
 };
