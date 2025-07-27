@@ -57,9 +57,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "Client",
       required: true,
+      enum: ["Client", "Caregiver", "Admin"],
     },
+    assignedClients: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // if caregiver
+    assignedCaregiver: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // if client
 
-    favProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     viewedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   },
   { timestamps: true }

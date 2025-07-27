@@ -3,16 +3,19 @@ const User = require("../models/userSchema");
 const cloudinary = require("../cloudinaryConfig");
 
 const sendApplication = async (req, res) => {
-  const { name, description, category, hourlyRate, experience, location } =
-    req.body;
+  const {
+    name,
+    description,
+    category,
+    hourlyRate,
+    experience,
+    location,
+    availability,
+  } = req.body;
   const user = await User.findOne({ _id: req.user._id });
 
   try {
     // Upload CV and Image to Cloudinary
-    console.log(req.body);
-
-    console.log(req.files);
-    console.log("cloudinary start");
     const cvUpload = req.files["cv"]
       ? await cloudinary.uploader.upload(req.files["cv"][0].path, {
           folder: "MarketPlace/CVs",
@@ -24,10 +27,9 @@ const sendApplication = async (req, res) => {
           folder: "MarketPlace/Images",
         })
       : null;
-    console.log("ENDED!");
 
-    console.log(imageUpload.secure_url, cvUpload.secure_url);
-    // Create Gig with uploaded URLs
+    const parsedAvailability = availability ? JSON.parse(availability) : [];
+
     const gig = await Gig.create({
       name,
       description,
@@ -35,34 +37,18 @@ const sendApplication = async (req, res) => {
       experience,
       category,
       location,
+      availability: parsedAvailability,
       cv: cvUpload ? cvUpload.secure_url : null,
       image: imageUpload ? imageUpload.secure_url : null,
       applicantId: user._id,
       applicantName: user.name,
       applicantEmail: user.email,
     });
-    console.log("GIg Created");
+
     res.status(200).json(gig);
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: "Gig is not created!" });
-  }
-};
-
-const uploadImage = async (req, res) => {
-  const image = req.file.path;
-  const { _id } = req.params;
-  try {
-    // Uploading Image to Cloudinary
-    const result = await cloudinary.uploader.upload(image, {
-      folder: "MarketPlace",
-    });
-    await Gig.findOneAndUpdate(
-      { _id },
-      { $push: { images: result.secure_url } }
-    );
-    res.status(200).json(result.secure_url);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
   }
 };
 
@@ -202,7 +188,6 @@ const dynamicCategory = async (req, res) => {
 };
 module.exports = {
   sendApplication,
-  uploadImage,
   getGigs,
   getUserGigs,
   updateGig,

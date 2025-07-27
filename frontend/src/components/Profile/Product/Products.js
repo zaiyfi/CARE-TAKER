@@ -20,7 +20,7 @@ const Products = () => {
         setEditForm={setEditForm}
         productId={productId}
       />
-      <GetLocation />
+      {/* <GetLocation /> */}
     </div>
   );
 };

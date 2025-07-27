@@ -47,6 +47,31 @@ const gigSchema = new mongoose.Schema(
       type: String,
       default: "Pending",
     },
+    availability: [
+      {
+        day: {
+          type: String,
+          enum: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+          ],
+          required: true,
+        },
+        startTime: {
+          type: String, // Format: "17:00" for 5PM
+          required: true,
+        },
+        endTime: {
+          type: String, // Format: "22:00" for 10PM
+          required: true,
+        },
+      },
+    ],
     reviews: [
       {
         user: {

@@ -4,12 +4,10 @@ const requireAuth = require("../middleware/requireAuth");
 const upload = require("../middleware/uploadImage");
 const {
   sendApplication,
-  uploadImage,
   getGigs,
   getUserGigs,
   updateGig,
   deleteGig,
-  deleteProductImage,
   addReview,
   dynamicCategory,
 } = require("../controllers/gigController");
@@ -42,8 +40,5 @@ router.get("/categories", dynamicCategory);
 //   deleteProductImage
 // );
 router.delete("/delete/:_id", requireAuth, deleteGig);
-
-// // Image Upload Route
-// router.patch("/upload/:_id", requireAuth, upload.single("file"), uploadImage);
 
 module.exports = router;

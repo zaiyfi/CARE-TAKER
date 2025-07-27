@@ -27,9 +27,10 @@ export const useLogin = () => {
         setError(json.error);
       } else {
         dispatch(setLoader(false));
-        navigate("/");
         dispatch(setUser(json));
         dispatch(setNotif("logged in success"));
+        navigate("/gigs");
+
         console.log(store.getState());
 
         navigator.geolocation.getCurrentPosition(

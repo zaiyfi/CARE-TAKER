@@ -4,6 +4,7 @@ import { setUserGigs } from "../../../redux/userGigSlice"; // updated import
 import store from "../../../redux/store";
 import UserImgUpload from "./UserImgUpload";
 import Caregiver from "./components/Caregiver";
+import Clients from "./components/Clients";
 
 const ProfileDetails = () => {
   const dispatch = useDispatch();
@@ -64,7 +65,11 @@ const ProfileDetails = () => {
           <h2 className="text-4xl font-semibold w-full">{auth.user.name}</h2>
           <h2 className="text-base font-normal">{auth.user.email}</h2>
         </div>
-        <Caregiver auth={auth} userGigs={userGigs} />
+        {auth.user.role === "Caregiver" ? (
+          <Caregiver auth={auth} userGigs={userGigs} />
+        ) : (
+          <Clients />
+        )}
       </div>
     </div>
   );

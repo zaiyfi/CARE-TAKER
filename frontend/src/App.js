@@ -64,7 +64,7 @@ function App() {
           <Route path="/home" element={<HomePage />} />
 
           <Route
-            path={"/"}
+            path={"/gigs"}
             element={
               <ProtectedLogin>
                 <Home />

@@ -1,135 +1,143 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+
 // Icons
 import { IoIosArrowDropdown } from "react-icons/io";
-import { MdOutlineDashboardCustomize } from "react-icons/md";
+import { MdOutlineDashboardCustomize, MdHealthAndSafety } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { SiGnuprivacyguard } from "react-icons/si";
 import { FaRegUserCircle } from "react-icons/fa";
-import { MdHealthAndSafety } from "react-icons/md";
-
-import { useState } from "react";
-import store from "../redux/store";
 
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(false);
-
-  // redux states
   const { auth } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
-  // Router Navigate
   const navigate = useNavigate();
 
-  // Logout Functionality
-  const handleLogout = async () => {
+  const handleLogout = () => {
     localStorage.removeItem("auth");
-    navigate("/login");
     dispatch({ type: "auth/logout" });
-    console.log(store.getState());
-    setDropdown(!dropdown);
-  };
-
-  // Button Funtionality
-  const handleClick = () => {
-    // Determining the target URL based on the user's role
-    const targetUrl = auth.user.role === "Admin" ? "/admin" : "/dashboard";
-
-    navigate(targetUrl);
-
     setDropdown(false);
+    navigate("/login");
   };
 
-  const path = window.location.pathname;
+  const handleDashboardClick = () => {
+    const targetUrl = auth?.user?.role === "Admin" ? "/admin" : "/dashboard";
+    setDropdown(false);
+    navigate(targetUrl);
+  };
+
   return (
-    <div className="sticky top-0" style={{ zIndex: 1000 }}>
-      <header
-        className={`shadow-md shadow-gray drop-shadow-md bg-white ${
-          path === "/dashboard" && " shadow-none drop-shadow-none "
-        }  flex justify-between py-4 px-6 items-center`}
-      >
+    <nav className="bg-white shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        {/* Logo */}
         <Link
-          className={`logo text-xl font-bold text-primary flex items-center`}
           to="/"
+          className="flex items-center text-primary font-bold text-2xl"
         >
           C
-          <span className="">
-            <MdHealthAndSafety className=" text-3xl" />
-          </span>
+          <MdHealthAndSafety className="text-3xl mx-1 text-green-600" />
           Connect
         </Link>
 
-        {/* Show this if user is logged in */}
-        {/* DropDown */}
-
-        <div>
-          <div
-            className={`round-img nav-t-r hover:bg-primary hover:text-white ${
-              dropdown === true && "bg-primary text-white"
-            }`}
-            onClick={() => setDropdown(!dropdown)}
+        {/* Main Links */}
+        <div className="flex items-center gap-6">
+          <Link
+            to="/home"
+            className="text-gray-700 hover:text-primary transition duration-150"
           >
-            {auth ? (
-              <img
-                src={auth.user.pic}
-                className="w-[28px] h-[28px] rounded-full me-1"
-                alt=""
-              />
-            ) : (
-              <FaRegUserCircle className="text-xl  me-1" />
-            )}
-            {auth ? <p>{auth.user.name}</p> : <p>Login</p>}
-            <IoIosArrowDropdown
-              className={`icon-rotate text-2xl ms-1 ${
-                dropdown === true && "rotate-180 "
-              }`}
-            />
-          </div>
-
-          {dropdown === true && (
-            <div className="dropdown border-2 shadow-2xl ">
-              {auth && (
-                <div>
-                  <div className="links " onClick={handleClick}>
-                    <MdOutlineDashboardCustomize className="icons" />{" "}
-                    <button>Dashboard</button>
-                  </div>
-                  <div className="links " onClick={handleLogout}>
-                    <IoIosLogOut className="icons" />
-                    <button>Logout</button>
-                  </div>
-                </div>
-              )}
-              {!auth && (
-                <div>
-                  <div
-                    className="links "
-                    onClick={() => {
-                      navigate("/login");
-                      setDropdown(!dropdown);
-                    }}
-                  >
-                    <RiLoginBoxLine className="icons" /> <button>Login</button>
-                  </div>
-                  <div
-                    className="links "
-                    onClick={() => {
-                      navigate("/register");
-                      setDropdown(!dropdown);
-                    }}
-                  >
-                    <SiGnuprivacyguard className="icons" />{" "}
-                    <button>Register</button>
-                  </div>
-                </div>
-              )}
-            </div>
+            Home
+          </Link>
+          <Link
+            to="/gigs"
+            className="text-gray-700 hover:text-primary transition duration-150"
+          >
+            Gigs
+          </Link>
+          {auth && (
+            <button
+              onClick={handleDashboardClick}
+              className="text-gray-700 hover:text-primary transition duration-150"
+            >
+              Dashboard
+            </button>
           )}
+
+          {/* Profile Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setDropdown(!dropdown)}
+              className={`flex items-center gap-1 px-3 py-1 rounded-full border hover:bg-primary hover:text-white transition ${
+                dropdown ? "bg-primary text-white" : "bg-gray-100 text-gray-800"
+              }`}
+            >
+              {auth ? (
+                <img
+                  src={auth.user.pic}
+                  className="w-7 h-7 rounded-full"
+                  alt="profile"
+                />
+              ) : (
+                <FaRegUserCircle className="text-xl" />
+              )}
+              <span className="text-sm">
+                {auth ? auth.user.name.split(" ")[0] : "Login"}
+              </span>
+              <IoIosArrowDropdown
+                className={`text-lg transition-transform ${
+                  dropdown ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {/* Dropdown Menu */}
+            {dropdown && (
+              <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg py-2 z-50">
+                {auth ? (
+                  <>
+                    <button
+                      onClick={handleDashboardClick}
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 w-full text-sm text-gray-700"
+                    >
+                      <MdOutlineDashboardCustomize />
+                      Dashboard
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 w-full text-sm text-gray-700"
+                    >
+                      <IoIosLogOut />
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      onClick={() => setDropdown(false)}
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
+                    >
+                      <RiLoginBoxLine />
+                      Login
+                    </Link>
+                    <Link
+                      to="/register"
+                      onClick={() => setDropdown(false)}
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
+                    >
+                      <SiGnuprivacyguard />
+                      Register
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-        {/* Show this if User is not logged in */}
-      </header>
-    </div>
+      </div>
+    </nav>
   );
 };
 

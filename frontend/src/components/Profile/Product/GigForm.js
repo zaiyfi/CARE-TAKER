@@ -61,11 +61,14 @@ const GigForm = () => {
       formDataToSend.append("name", formData.title);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("category", formData.category);
-
       formDataToSend.append("hourlyRate", formData.price);
       formDataToSend.append("experience", formData.experience);
       if (formData.cv) formDataToSend.append("cv", formData.cv);
       if (formData.image) formDataToSend.append("image", formData.image);
+      formDataToSend.append(
+        "availability",
+        JSON.stringify(formData.availability)
+      );
 
       const response = await fetch("/api/gigs/send", {
         method: "POST",
@@ -131,6 +134,8 @@ const GigForm = () => {
     category: "",
     cv: null,
     image: null,
+    imageURL: "",
+    availability: [],
   });
 
   const handleChange = (e) => {
@@ -148,16 +153,16 @@ const GigForm = () => {
   };
 
   const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    if (files.length > 0) {
-      const file = files[0];
-
+    const file = e.target.files[0];
+    if (file) {
       setFormData((prev) => ({
         ...prev,
-        [name]: file,
+        image: file,
+        imageURL: URL.createObjectURL(file),
       }));
     }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const wordCount = formData.title.trim().split(/\s+/).length;
@@ -209,7 +214,7 @@ const GigForm = () => {
     }
   };
 
-  const categories = ["Pets", "Children", "Elders", "Patients"];
+  const categories = ["Pets", "Children", "Elders", "Disabled"];
 
   return (
     <>
@@ -246,7 +251,7 @@ const GigForm = () => {
 
           <button
             onClick={() => handleDeleteGig(userGigs[0]._id)}
-            className="mt-4 bg-primary text-white p-2 rounded hover:bg-secondary transition-all"
+            className="mt-4 bg-primary text-white p-2 rounded hover:bg-lightPrimary transition-all"
           >
             Delete Gig
           </button>
@@ -312,7 +317,7 @@ const GigForm = () => {
 
             <textarea
               name="description"
-              placeholder="Describe your skills & availability"
+              placeholder="Describe your skills & experience"
               value={formData.description}
               onChange={handleChange}
               className="w-full min-h-fit max-h-80 p-2 border rounded outline-primary"
@@ -365,6 +370,72 @@ const GigForm = () => {
                   className="mt-2 w-32 h-32 object-cover rounded-lg border"
                 />
               )}
+            </div>
+
+            {/*    Availability Info   */}
+            <div className="my-4">
+              <h3 className="text-md font-semibold mb-2">Availability</h3>
+              {[
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday",
+              ].map((day) => (
+                <div key={day} className="mb-2 flex gap-2 items-center">
+                  <input
+                    type="checkbox"
+                    id={`day-${day}`}
+                    onChange={(e) => {
+                      const isChecked = e.target.checked;
+                      setFormData((prev) => {
+                        let updated = [...prev.availability];
+                        if (isChecked) {
+                          updated.push({ day, startTime: "", endTime: "" });
+                        } else {
+                          updated = updated.filter((item) => item.day !== day);
+                        }
+                        return { ...prev, availability: updated };
+                      });
+                    }}
+                  />
+                  <label htmlFor={`day-${day}`} className="w-24">
+                    {day}
+                  </label>
+                  <input
+                    type="time"
+                    onChange={(e) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        availability: prev.availability.map((slot) =>
+                          slot.day === day
+                            ? { ...slot, startTime: e.target.value }
+                            : slot
+                        ),
+                      }));
+                    }}
+                    className="border px-2 py-1 rounded"
+                    disabled={!formData.availability.find((a) => a.day === day)}
+                  />
+                  <input
+                    type="time"
+                    onChange={(e) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        availability: prev.availability.map((slot) =>
+                          slot.day === day
+                            ? { ...slot, endTime: e.target.value }
+                            : slot
+                        ),
+                      }));
+                    }}
+                    className="border px-2 py-1 rounded"
+                    disabled={!formData.availability.find((a) => a.day === day)}
+                  />
+                </div>
+              ))}
             </div>
 
             <button
