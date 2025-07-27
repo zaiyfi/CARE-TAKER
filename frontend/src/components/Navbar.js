@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../redux/authSlice";
 // Icons
 import { IoIosArrowDropdown } from "react-icons/io";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
@@ -11,7 +10,6 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { MdHealthAndSafety } from "react-icons/md";
 
 import { useState } from "react";
-import { setProducts } from "../redux/gigSlice";
 import store from "../redux/store";
 
 const Navbar = () => {

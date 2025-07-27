@@ -42,16 +42,21 @@ const Login = () => {
         </h2>
 
         {/* Dummy Credentials */}
-        <div className="mb-6 text-sm text-gray-700 grid grid-cols-2 gap-4">
+        <div className="mb-6 text-sm text-gray-700 grid grid-cols-3 gap-2">
           <div className="bg-gray-50 p-2 rounded border">
             <h3 className="font-semibold">Admin:</h3>
             <p className="text-xs">siraj12@gmail.com</p>
             <p className="text-xs">siraj12#G</p>
           </div>
           <div className="bg-gray-50 p-2 rounded border">
-            <h3 className="font-semibold">User:</h3>
+            <h3 className="font-semibold">Caregiver:</h3>
             <p className="text-xs">example12@gmail.com</p>
             <p className="text-xs">example12#G</p>
+          </div>
+          <div className="bg-gray-50 p-2 rounded border">
+            <h3 className="font-semibold">Client:</h3>
+            <p className="text-xs">asdf1234@gmail.com</p>
+            <p className="text-xs">asdf1234#G</p>
           </div>
         </div>
 
@@ -88,7 +93,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition duration-200 disabled:opacity-60"
+            className="w-full bg-primary hover:bg-lightPrimary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition duration-200 disabled:opacity-60"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
