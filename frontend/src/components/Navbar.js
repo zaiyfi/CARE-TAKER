@@ -45,7 +45,7 @@ const Navbar = () => {
         {/* Main Links */}
         <div className="flex items-center gap-6">
           <Link
-            to="/home"
+            to="/"
             className="text-gray-700 hover:text-primary transition duration-150"
           >
             Home
@@ -56,14 +56,6 @@ const Navbar = () => {
           >
             Gigs
           </Link>
-          {auth && (
-            <button
-              onClick={handleDashboardClick}
-              className="text-gray-700 hover:text-primary transition duration-150"
-            >
-              Dashboard
-            </button>
-          )}
 
           {/* Profile Dropdown */}
           <div className="relative">

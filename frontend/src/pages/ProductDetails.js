@@ -55,88 +55,95 @@ const ProductDetails = () => {
   };
 
   return (
-    <div className="product-details">
-      <div className=" m-2">
-        {gigs.length > 0 &&
-          gigs
-            .filter((product) => product._id === productId)
-            .map((product) => (
-              <div className="grid grid-cols-2 gap-5" key={product._id}>
-                {/* Images  For    Product                                */}
-                <div className="flex flex-col gap-2">
-                  {product.image ? (
-                    <img
-                      src={product.image}
-                      className="object-cover w-full h-[500px] rounded-md"
-                      alt=""
-                    />
-                  ) : (
-                    <h1 className=" mt-4 text-center text-2xl">
-                      No Images Uploaded!
-                    </h1>
-                  )}
-                  <div className="flex gap-5 mt-2 ">
-                    {/* {product.images.map((image, index) => (
-                      <div className="flex gap-5" key={index}>
-                        <img
-                          src={image}
-                          className={`w-36 h-20 object-cover rounded-md cursor-pointer p-2 ${
-                            selectedIndex === index
-                              ? "border-2 border-primary"
-                              : ""
-                          }`}
-                          onClick={() => setSelectedIndex(index)}
-                          alt=""
-                        />
-                      </div>
-                    ))} */}
+    <div className="max-w-6xl mx-auto px-4 py-6">
+      {gigs.length > 0 &&
+        gigs
+          .filter((product) => product._id === productId)
+          .map((product) => (
+            <div
+              key={product._id}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+            >
+              {/* Product Images & Date */}
+              <div className="flex flex-col gap-4">
+                {product.image ? (
+                  <img
+                    src={product.image}
+                    className="w-full h-[400px] object-cover rounded-lg border"
+                    alt={product.name}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-[400px] bg-gray-100 text-gray-500 rounded-lg border text-xl">
+                    No Images Uploaded
                   </div>
-                  <hr className="my-2" />
-                  <div className="gap-0">
-                    <h2 className="text-lg font-semibold">Added on</h2>
-                    <p className="">
-                      {formatDistanceToNow(new Date(product.createdAt), {
-                        addSuffix: true,
-                      })}
-                    </p>
-                  </div>
-                </div>
-                {/* Product      Info                          */}
-                <div className="flex flex-col gap-2" key={product._id}>
-                  <div>
-                    <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
-                    <span>{product.description}</span>
-                  </div>
-                  <hr className="my-2" />
-                  {/* Product      and       Owner      Details     */}
-                  <div>
-                    <ProductInfo product={product} />
-                    <hr className="my-2" />
-
-                    {/* Owner Details */}
-                    {auth ? (
-                      <SellerDetails seller={product.applicantId} />
-                    ) : (
-                      "You are not logged in!"
-                    )}
-                    <ProductReviews
-                      auth={auth}
-                      reviews={product.reviews}
-                      productId={product._id}
-                    />
-                    {auth.user._id !== product.applicantId && (
-                      <button
-                        onClick={handleChat}
-                        className=" bg-primary text-white p-2 rounded-md hover:bg-secondary"
-                      >
-                        Chat Now!
-                      </button>
-                    )}
-                  </div>
+                )}
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-700">Added</h3>
+                  <p className="text-sm text-gray-600">
+                    {formatDistanceToNow(new Date(product.createdAt), {
+                      addSuffix: true,
+                    })}
+                  </p>
                 </div>
               </div>
-            ))}
-      </div>
+
+              {/* Product Info */}
+              <div className="flex flex-col gap-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                    {product.name}
+                  </h1>
+                  <p className="text-gray-700">{product.description}</p>
+                </div>
+
+                <div className="border-t pt-4 space-y-6">
+                  <ProductInfo product={product} />
+                  {/* Gig              Availability */}
+                  {product.availability?.length > 0 && (
+                    <div className="bg-gray-50 border rounded-lg p-4 shadow-sm">
+                      <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                        Availability
+                      </h2>
+                      <ul className="space-y-2">
+                        {product.availability.map((slot) => (
+                          <li
+                            key={slot._id}
+                            className="flex justify-between items-center text-gray-700 border-b last:border-b-0 pb-2"
+                          >
+                            <span className="font-medium">{slot.day}</span>
+                            <span className="text-sm text-gray-600">
+                              {slot.startTime} — {slot.endTime}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {auth ? (
+                    <SellerDetails seller={product.applicantId} />
+                  ) : (
+                    <p className="text-red-500">You are not logged in!</p>
+                  )}
+
+                  <ProductReviews
+                    auth={auth}
+                    reviews={product.reviews}
+                    productId={product._id}
+                  />
+
+                  {auth?.user._id !== product.applicantId && (
+                    <button
+                      onClick={handleChat}
+                      className="bg-primary text-white px-4 py-2 rounded-md hover:bg-lightPrimary transition"
+                    >
+                      Chat Now
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
     </div>
   );
 };

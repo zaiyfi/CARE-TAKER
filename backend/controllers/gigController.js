@@ -16,12 +16,15 @@ const sendApplication = async (req, res) => {
 
   try {
     // Upload CV and Image to Cloudinary
+    console.log("Files:", req.files);
+    console.log("CV", req.files["cv"]);
     const cvUpload = req.files["cv"]
       ? await cloudinary.uploader.upload(req.files["cv"][0].path, {
+          resource_type: "auto",
           folder: "MarketPlace/CVs",
         })
       : null;
-
+    console.log("CV Upload:", cvUpload);
     const imageUpload = req.files["image"]
       ? await cloudinary.uploader.upload(req.files["image"][0].path, {
           folder: "MarketPlace/Images",

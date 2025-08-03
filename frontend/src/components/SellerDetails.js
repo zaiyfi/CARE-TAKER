@@ -27,25 +27,32 @@ function SellerDetails({ seller }) {
   };
 
   return (
-    <div>
-      <h1 className=" ">Owner Details</h1>
+    <div className="bg-white border rounded-lg p-4 shadow-sm">
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        Seller Details
+      </h2>
 
       {user && (
-        <div className="flex justify-between">
-          <div>
-            <p>Name</p>
-            <p>Email</p>
-            {user.cellNo && <p>Cell No</p>}
+        <div className="flex justify-between text-sm text-gray-700">
+          <div className="space-y-1">
+            <p className="font-medium">Name</p>
+            <p className="font-medium">Email</p>
+            {user.cellNo && <p className="font-medium">Cell No</p>}
           </div>
-          <div>
+          <div className="text-right space-y-1">
             <p>{user.name}</p>
             <p>{user.email}</p>
             {user.cellNo && <p>+{formatCellNumber(user.cellNo)}</p>}
           </div>
         </div>
       )}
-      {/* Custom Made Button Component */}
-      <Button link={`/seller/profile/${user._id}`} content="Seller Profile" />
+
+      <div className="mt-4">
+        <Button
+          link={`/seller/profile/${user._id}`}
+          content="View Full Profile"
+        />
+      </div>
     </div>
   );
 }

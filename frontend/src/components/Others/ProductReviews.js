@@ -6,53 +6,64 @@ import AddReview from "./AddReview";
 const ProductReviews = ({ reviews, productId, auth }) => {
   const [addReview, setAddReview] = useState(false);
   return (
-    <div>
-      <h1 className="">Product Feedback</h1>
-      <div className="my-2">
+    <div className="bg-white border rounded-lg p-4 shadow-sm mt-4">
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        Product Feedback
+      </h2>
+
+      <div className="space-y-4">
         {reviews.map((r, index) => (
           <div
             key={index}
-            className={`${
-              index !== reviews.length - 1 && " border-b-2 pb-2 mb-2"
-            }  `}
+            className={`${index !== reviews.length - 1 ? "border-b pb-4" : ""}`}
           >
             <div className="flex items-center mb-2">
               <img
                 src={r.user.pic}
-                className="w-[40px] h-[40px] rounded-full object-cover"
-                alt=""
+                alt="User"
+                className="w-10 h-10 rounded-full object-cover border"
               />
-              <h2 className="ms-2 font-medium">{r.user.name}</h2>
-              <div className="rating ms-4 flex">
-                {[...Array(5)].map((star, index) => {
-                  const currentRating = index + 1;
-                  return (
-                    <label>
+              <div className="ml-3">
+                <h3 className="font-medium text-sm text-gray-800">
+                  {r.user.name}
+                </h3>
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => {
+                    const current = i + 1;
+                    return (
                       <IoStar
-                        className="start"
-                        size={20}
-                        color={
-                          currentRating <= r.rating ? "#ffc107" : "#e4e5e9"
-                        }
+                        key={i}
+                        size={16}
+                        color={current <= r.rating ? "#fbbf24" : "#e5e7eb"}
                       />
-                    </label>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
-            <p>{r.comment}</p>
+            <p className="text-sm text-gray-700">{r.comment}</p>
           </div>
         ))}
       </div>
+
       {addReview && (
-        <AddReview
-          IoStar={IoStar}
-          productId={productId}
+        <div className="mt-4">
+          <AddReview
+            IoStar={IoStar}
+            productId={productId}
+            setAddReview={setAddReview}
+          />
+        </div>
+      )}
+
+      <div className="mt-4">
+        <Button
+          content={auth ? "Add a review" : "Please Login First"}
+          bgColor={auth ? "bg-primary" : "bg-lightPrimary"}
+          disable={!auth}
           setAddReview={setAddReview}
         />
-      )}
-            {/* Custom Made Button Component */}
-      <Button content={auth ? `Add a review`: "Please Login First!"} bgColor={auth?`bg-primary`:` bg-secondary`} disable={auth? false:true} setAddReview={setAddReview} />
+      </div>
     </div>
   );
 };

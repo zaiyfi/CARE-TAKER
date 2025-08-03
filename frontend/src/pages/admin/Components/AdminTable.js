@@ -17,7 +17,7 @@ const AdminTable = () => {
         dispatch(setLoader(true));
 
         try {
-          const response = await fetch("/api/products", {
+          const response = await fetch("/api/gigs/get-gigs", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${auth.token}`,
@@ -57,7 +57,7 @@ const AdminTable = () => {
 
               {(!gigs || gigs.length === 0) && (
                 <div className="p-6 text-lg font-bold text-center text-gray-700">
-                  No Products!
+                  No Gigs!
                 </div>
               )}
             </div>

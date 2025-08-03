@@ -87,84 +87,68 @@ const HomeProducts = () => {
           .includes(searchQuery.toLowerCase()))
   );
   return (
-    <div>
-      {/* Product Details header items */}
-      <div className="flex w-full justify-between my-4 items-center">
-        <div className="flex justify-between w-3/12 items-center">
-          <input
-            type="search"
-            className=" border-2 border-gray-500 outline-none p-1"
-            placeholder="Search..."
-            onChange={handleSearchQuery}
-          />
-        </div>
-        <p className="f font-normal">
-          <span className="f font-basic">{filteredProducts?.length}</span>{" "}
-          {filteredProducts?.length > 1 ? "Gigs" : "Gig"} Available
-        </p>
-        <select className=" border-2 border-gray-500 outline-none p-1 cursor-pointer">
-          <option value="">Products (Newest to Oldest)</option>
+    <div className="max-w-7xl mx-auto px-4 py-6">
+      {/* Search & Sort */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <input
+          type="search"
+          className="w-full md:w-1/3 border border-gray-300 px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+          placeholder="Search gigs..."
+          onChange={handleSearchQuery}
+        />
+
+        <select className="w-full md:w-1/4 border border-gray-300 px-4 py-2 rounded-md text-sm focus:ring-2 focus:ring-blue-500">
+          <option value="">Sort by: Newest</option>
+          {/* Add real sorting options here if available */}
         </select>
       </div>
-      <div className="flex gap-2 w-[100%]">
-        {/*                                        Filters   for category                       */}
-        <div className=" border-e pe-2">
-          <h1 className="text-lg text-black">Category</h1>
-          <div className="buttons flex flex-col gap-2">
-            <button
-              value="All"
-              onClick={(e) => setFilters(e.target.value)}
-              className={filters === "All" ? "fil-css" : ""}
-            >
-              All
-            </button>
-            {/* Dynamic Categories */}
-            {dynamicCat &&
-              dynamicCat?.map((cat) => (
-                <button
-                  key={cat}
-                  value={cat}
-                  onClick={(e) => setFilters(e.target.value)}
-                  className={filters === cat ? "fil-css" : ""}
-                >
-                  {cat}
-                </button>
-              ))}
-          </div>
-          <div>
-            <button
-              onClick={() => navigate("/near-me")}
-              className=" text-primary border-2 border-primary p-2  rounded-xl hover:bg-primary hover:text-white"
-            >
-              Nearest Me
-            </button>
-          </div>
-        </div>
-        {/*                                               Filters End */}
 
-        {/*  Mapping     Products */}
-        <div className="products md:w-10/12">
-          <div className="h-auto relative">
-            {gigs?.length === 0 && (
-              <div className="flex justify-center">
-                <h1 className="text-2xl">No Products Available!</h1>
-              </div>
-            )}
-            {gigs && (
-              <div className=" grid grid-cols-4 gap-5">
-                {/* Mapping start */}
-                {filteredProducts?.map((gig) => (
-                  <HomeProductsMap
-                    product={gig}
-                    user={auth?.user}
-                    token={auth?.token}
-                  />
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Filters */}
+        <aside className="lg:w-1/4 w-full">
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">
+              Categories
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {Array.isArray(dynamicCat) &&
+                ["All", ...dynamicCat].map((cat) => (
+                  <button
+                    key={cat}
+                    value={cat}
+                    onClick={(e) => setFilters(e.target.value)}
+                    className={`px-4 py-1.5 rounded-full border text-sm transition ${
+                      filters === cat
+                        ? "bg-primary text-white"
+                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    {cat}
+                  </button>
                 ))}
-                {/* Mapping End */}
-              </div>
-            )}
+            </div>
           </div>
-        </div>
+        </aside>
+
+        {/* Products */}
+        <section className="lg:w-3/4 w-full">
+          {filteredProducts?.length === 0 ? (
+            <div className="flex justify-center items-center h-48 text-gray-500 text-lg">
+              No Gigs Available
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProducts.map((gig) => (
+                <HomeProductsMap
+                  key={gig._id}
+                  product={gig}
+                  user={auth?.user}
+                  token={auth?.token}
+                />
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

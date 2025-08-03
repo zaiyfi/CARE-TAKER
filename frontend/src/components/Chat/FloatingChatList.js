@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import socket from "../../socket";
 import { setChats } from "../../redux/chatSlice";
 import store from "../../redux/store";
+import { BsChatDotsFill } from "react-icons/bs";
 
 const FloatingChatList = () => {
   const { auth } = useSelector((state) => state.auth);
@@ -106,34 +107,32 @@ const FloatingChatList = () => {
   return (
     <div className="fixed bottom-4 right-4 z-9999">
       <div
-        className="bg-primary text-white px-4 py-2 rounded-t-lg cursor-pointer"
+        className={`bg-primary text-white px-4 py-2 rounded-t-lg cursor-pointer flex items-center gap-2 relative transition-all duration-300 ease-in-out hover:scale-[1.02] active:scale-[0.98]`}
         onClick={() => {
           setOpen(!open);
           if (!open) setUnreadCount(0);
         }}
       >
-        💬 Chats
+        <BsChatDotsFill className="text-lg transition-transform duration-300" />
+        <span className="transition-opacity duration-300">Chats</span>
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center animate-ping">
+          <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300">
             {unreadCount}
           </span>
         )}
       </div>
 
       {open && (
-        <div className="bg-white w-72 max-h-96 overflow-y-auto shadow-lg rounded-b-lg border border-gray-200">
+        <div className="bg-white w-72 max-h-96 overflow-y-auto shadow-lg rounded-b-lg border border-gray-200 transition-all duration-300 animate-fade-in">
           {chats.length === 0 && (
             <div className="p-4 text-gray-500">No chats yet</div>
           )}
           {chats.map((chat) => {
-            console.log("Chat data:", chat);
-            if (!chat.members || !Array.isArray(chat.members)) return null; // safety check
-
             const otherUser = chat.members.find(
               (m) => m && m._id !== auth.user._id
             );
 
-            if (!otherUser) return null; // if no valid other user, skip
+            if (!otherUser) return null;
 
             return (
               <div

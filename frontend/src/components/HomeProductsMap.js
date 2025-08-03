@@ -40,36 +40,34 @@ function HomeProductsMap({ product, user, token }) {
   };
   return (
     <div
-      className="col shadow-lg shadow-gray border-2  relative"
-      key={product._id}
+      className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transition cursor-pointer"
+      onClick={ProductDetails}
     >
-      {/* Product Image */}
-      <div className=" flex items-center justify-center relative w-full h-2/3">
+      {/* Image */}
+      <div className="aspect-video bg-gray-100">
         {product.image ? (
           <img
             src={product.image}
-            alt=""
+            alt={product.name}
             className="w-full h-full object-cover"
             loading="lazy"
           />
         ) : (
-          <h1 className="  text-xl text-black">No Images Uploaded!</h1>
+          <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+            No Image Available
+          </div>
         )}
-      </div>{" "}
-      {/* Product info */}
-      <div className="content px-4 pt-2">
-        <h2>{product.name}</h2>
-        <p className=" text-xs font-light p-0">
+      </div>
+
+      {/* Content */}
+      <div className="p-4 space-y-1">
+        <h3 className="font-semibold text-gray-800 truncate">{product.name}</h3>
+        <p className="text-xs text-gray-500">
           {formatDistanceToNow(new Date(product.createdAt), {
             addSuffix: true,
           })}
         </p>
-        <h2
-          className="cursor-pointer underline"
-          onClick={() => ProductDetails()}
-        >
-          Gig Details
-        </h2>
+        <p className="text-blue-600 text-sm hover:underline">View Gig</p>
       </div>
     </div>
   );

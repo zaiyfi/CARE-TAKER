@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Pages
-import Home from "./pages/Home";
+import Home from "./pages/Gigs";
 import Profile from "./pages/Profile";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -61,7 +61,7 @@ function App() {
         {loading && <LoaderSpinner />}
         <Navbar />
         <Routes>
-          <Route path="/home" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
 
           <Route
             path={"/gigs"}

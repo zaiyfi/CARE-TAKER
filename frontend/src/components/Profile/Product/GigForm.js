@@ -154,13 +154,23 @@ const GigForm = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        image: file,
-        imageURL: URL.createObjectURL(file),
-      }));
-    }
+    const fieldName = e.target.name;
+
+    if (!file) return;
+
+    setFormData((prev) => {
+      const updated = { ...prev };
+
+      if (fieldName === "image") {
+        updated.image = file;
+        updated.imageURL = URL.createObjectURL(file);
+      } else if (fieldName === "cv") {
+        updated.cv = file;
+        updated.cvURL = URL.createObjectURL(file);
+      }
+
+      return updated;
+    });
   };
 
   const handleSubmit = (e) => {
@@ -219,42 +229,91 @@ const GigForm = () => {
   return (
     <>
       {userGigs.length > 0 ? (
-        <div className="w-full md:w-5/6 mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Your Existing Gig</h2>
+        <div className="w-full md:w-4/5 mx-auto bg-white p-8 rounded-2xl shadow-lg space-y-6">
+          <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
+            Your Existing Gig
+          </h2>
 
-          <div className="space-y-2">
-            <p>
-              <strong>Title:</strong> {userGigs[0].name}
-            </p>
-            <p>
-              <strong>Category:</strong> {userGigs[0].category}
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p>
+                <span className="font-semibold text-gray-600">Title:</span>{" "}
+                {userGigs[0].name}
+              </p>
+              <p>
+                <span className="font-semibold text-gray-600">Category:</span>{" "}
+                {userGigs[0].category}
+              </p>
+              <p>
+                <span className="font-semibold text-gray-600">
+                  Hourly Rate:
+                </span>{" "}
+                {userGigs[0].hourlyRate}PKR
+              </p>
+              <p>
+                <span className="font-semibold text-gray-600">Experience:</span>{" "}
+                {userGigs[0].experience}
+              </p>
+              <p>
+                <span className="font-semibold text-gray-600">
+                  Description:
+                </span>{" "}
+                {userGigs[0].description}
+              </p>
 
-            <p>
-              <strong>Hourly Rate:</strong> {userGigs[0].hourlyRate}
-            </p>
-            <p>
-              <strong>Experience:</strong> {userGigs[0].experience}
-            </p>
-            <p>
-              <strong>Description:</strong> {userGigs[0].description}
-            </p>
-            {/* Optional image preview */}
+              {userGigs[0].cv && (
+                <p>
+                  <span className=" font-semibold text-gray-600">CV:</span>{" "}
+                  <a
+                    href={userGigs[0].cv}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline hover:text-blue-800"
+                  >
+                    View CV
+                  </a>
+                </p>
+              )}
+
+              {userGigs[0].availability &&
+                userGigs[0].availability.length > 0 && (
+                  <div className="mt-4">
+                    <p className="font-semibold text-gray-600 mb-1">
+                      Availability:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {userGigs[0].availability.map((slot, idx) => (
+                        <span
+                          key={idx}
+                          className="bg-green-100 text-green-800 px-3 py-1 text-sm rounded-full border border-green-300"
+                        >
+                          {slot.day} {slot.startTime} - {slot.endTime}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+            </div>
+
             {userGigs[0].image && (
-              <img
-                src={userGigs[0].image}
-                alt="Gig Image"
-                className="w-32 h-32 object-cover rounded border"
-              />
+              <div className="flex justify-center md:justify-end">
+                <img
+                  src={userGigs[0].image}
+                  alt="Gig Image"
+                  className="w-40 h-40 rounded-xl object-cover border"
+                />
+              </div>
             )}
           </div>
 
-          <button
-            onClick={() => handleDeleteGig(userGigs[0]._id)}
-            className="mt-4 bg-primary text-white p-2 rounded hover:bg-lightPrimary transition-all"
-          >
-            Delete Gig
-          </button>
+          <div className="flex justify-end">
+            <button
+              onClick={() => handleDeleteGig(userGigs[0]._id)}
+              className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition duration-200"
+            >
+              Delete Gig
+            </button>
+          </div>
         </div>
       ) : (
         <div className="w-full md:w-5/6 mx-auto bg-white p-6 rounded-lg shadow-md">

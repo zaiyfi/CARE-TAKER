@@ -2,10 +2,9 @@ import HomeProducts from "../components/HomeProducts";
 
 const Home = () => {
   return (
-    <div className="home">
-      {/* Products */}
+    <main className="pt-4">
       <HomeProducts />
-    </div>
+    </main>
   );
 };
 
