@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
-import { setUserCity, setVerificationInfo } from "../../../../redux/authSlice";
 import { useDispatch } from "react-redux";
-import store from "../../../../redux/store";
 import VerificationForm from "./VerificationForm";
+import {
+  fetchCityNameAndUpdate,
+  fetchVerificationInfo,
+} from "../../../../lib/helpers/caregiverHelpers";
+
+// Toast notifications
+import "react-toastify/dist/ReactToastify.css";
 
 const Caregiver = ({ auth, userGigs }) => {
   const dispatch = useDispatch();
@@ -25,85 +30,22 @@ const Caregiver = ({ auth, userGigs }) => {
   const token = auth.token;
 
   useEffect(() => {
-    const fetchCityNameAndUpdate = async () => {
-      if (
-        user?.location?.coordinates?.length === 2 &&
-        !user.city // only fetch if city is missing
-      ) {
-        const [lng, lat] = user.location.coordinates;
+    if (user?.location?.coordinates && token) {
+      const [lng, lat] = user.location.coordinates;
 
-        try {
-          console.log("Fetching city name from coordinates:", lat, lng);
-          // Get city from coordinates
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-          );
-          const data = await res.json();
-
-          const city =
-            data.address?.city ||
-            data.address?.town ||
-            data.address?.village ||
-            data.address?.state ||
-            "Unknown";
-
-          setCityName(city); // show on UI immediately
-
-          // Send city to backend to save in user document
-          const updateRes = await fetch(`/api/auth/update/${user._id}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ city }),
-          });
-          const updateData = await updateRes.json();
-          if (updateRes.ok) {
-            console.log("City updated successfully in user document");
-            dispatch(setUserCity(city)); // update the userGigs in Redux store
-            console.log(store.getState());
-            return console.log(updateData);
-          }
-
-          if (!updateRes.ok) {
-            console.error("Failed to update city in user document");
-          }
-        } catch (err) {
-          console.error("Reverse geocoding or update failed", err);
-          setCityName("Unknown");
+      fetchCityNameAndUpdate(lat, lng, user._id, token, dispatch).then(
+        (city) => {
+          setCityName(city); // Optional local state
         }
-      } else if (user.city) {
-        setCityName(user.city); // already exists in DB
-      }
-    };
-
-    const fetchVerificationInfo = async () => {
-      try {
-        const res = await fetch("/api/verify/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        if (res.ok) {
-          console.log("Verification data fetched successfully:", data);
-          dispatch(setVerificationInfo(data));
-          console.log(store.getState());
-        } else {
-          console.warn("No verification data found.");
-        }
-      } catch (err) {
-        console.error("Error fetching verification info", err);
-      }
-    };
-
-    if (user.role === "Caregiver" && !user.verificationInfo) {
-      fetchVerificationInfo();
+      );
     }
+  }, [user.location, token, user._id, dispatch]);
 
-    fetchCityNameAndUpdate();
-  }, []);
+  useEffect(() => {
+    if (!user.verificationInfo) {
+      fetchVerificationInfo(token, dispatch);
+    }
+  }, [token]);
 
   const openVerificationModal = () => {
     setShowModal(true);
@@ -131,7 +73,7 @@ const Caregiver = ({ auth, userGigs }) => {
                 className="w-32 h-20 object-cover rounded"
               />
             ) : (
-              <p className="text-sm">No ID Card provided yet.</p>
+              <p className="text-sm">No ID provided yet.</p>
             )}
           </div>
         </div>

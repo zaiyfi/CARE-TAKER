@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { BiErrorCircle } from "react-icons/bi";
 import { useLogin } from "../../hooks/useLogin";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
 const Login = () => {
   const { loading } = useSelector((state) => state.loader);
   const [email, setEmail] = useState("");
@@ -27,14 +29,6 @@ const Login = () => {
             <p>{error}</p>
           </div>
         )}
-
-        {/* Optional: Success Message */}
-        {/* {loggedIn && (
-          <div className="flex items-start bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            <GrStatusGood className="text-xl mr-2 mt-0.5" />
-            <p>User Logged in Successfully</p>
-          </div>
-        )} */}
 
         {/* Title */}
         <h2 className="text-2xl font-bold text-center text-primary mb-4">

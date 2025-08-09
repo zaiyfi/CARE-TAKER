@@ -34,6 +34,12 @@ import UnprotectedRoute from "./components/Others/UnprotectedRoute";
 import socket from "./socket";
 import HomePage from "./pages/HomePage";
 
+// Toast notifications
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ContactAdmin from "./pages/ContactAdmin";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+
 function App() {
   // Getting the state of loader
   const { loading } = useSelector((state) => state.loader);
@@ -80,7 +86,7 @@ function App() {
             }
           />
           <Route
-            path="/near-me"
+            path="/gigs/near-me"
             element={
               <ProtectedLogin>
                 <NearMeMap />
@@ -131,11 +137,14 @@ function App() {
               </UnprotectedRoute>
             }
           />
+          <Route path="/contact-admin" element={<ContactAdmin />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
           <Route path="*" element={<Page404 />} />
         </Routes>
-        <ProtectedLogin>
-          <FloatingChatList />
-        </ProtectedLogin>
+        {auth?.user?._id && <FloatingChatList />}
+
+        <ToastContainer position="top-right" autoClose={3000} />
       </div>
     </BrowserRouter>
   );

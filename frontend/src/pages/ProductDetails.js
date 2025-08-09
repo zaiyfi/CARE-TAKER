@@ -7,6 +7,11 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import SellerDetails from "../components/SellerDetails";
 import ProductInfo from "../components/Others/ProductInfo";
 import ProductReviews from "../components/Others/ProductReviews";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import AppointmentPopup from "../components/AppointmentPopup";
+import { fetchAppointments } from "../lib/helpers/getAppointments";
+import { addAppointment } from "../redux/appointmentsSlice";
 
 const ProductDetails = () => {
   // Redux states
@@ -14,13 +19,36 @@ const ProductDetails = () => {
 
   const { auth } = useSelector((state) => state.auth);
   const { gigs } = useSelector((state) => state.gigs);
+  const [showPopup, setShowPopup] = useState(false);
+
   const dispatch = useDispatch();
   const { productId } = useParams();
+
+  // Get appointments from redux
+  const { appointments } = useSelector((state) => state.appointment);
+
+  // Get this product
+  const currentProduct = gigs.find((product) => product._id === productId);
+
+  // Check if appointment with this caregiver is already booked
+  const existingAppointment = appointments.find(
+    (a) =>
+      a.client._id === auth?.user?._id &&
+      a.caregiver._id === currentProduct?.applicant._id &&
+      ["Assigned", "Pending"].includes(a.status) // Only block if active
+  );
+
+  useEffect(() => {
+    if (auth?.token) {
+      fetchAppointments(dispatch, auth.token);
+    }
+  }, [auth?.token]);
 
   // handle chat
   const handleChat = async () => {
     const product = gigs.find((p) => p._id === productId);
-    const sellerId = product.applicantId;
+    const sellerId = product.applicant._id; // Use applicant._id instead of applicantId
+    const sellerName = product.applicantName;
 
     try {
       const res = await fetch("http://localhost:4000/api/chats", {
@@ -44,6 +72,7 @@ const ProductDetails = () => {
             chatId: data._id, // ✅ valid chatId
             productId,
             sellerId,
+            userName: sellerName, // Pass seller name for display
           },
         });
       } else {
@@ -51,6 +80,37 @@ const ProductDetails = () => {
       }
     } catch (error) {
       console.error("Error creating chat:", error);
+    }
+  };
+
+  // Sample data for caregivers, appointments, and client preferences
+  const handleAppointmentSubmit = async (formData, clientId, caregiverId) => {
+    try {
+      const res = await fetch("http://localhost:4000/api/appointments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${auth.token}`,
+        },
+        body: JSON.stringify({
+          ...formData,
+          clientId,
+          caregiverId,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("Appointment booked successfully!");
+        setShowPopup(false);
+        dispatch(addAppointment(data));
+      } else {
+        toast.error(data.message || "Failed to book appointment");
+      }
+    } catch (err) {
+      console.error("Appointment error:", err);
+      toast.error("An error occurred while booking appointment.");
     }
   };
 
@@ -121,7 +181,10 @@ const ProductDetails = () => {
                   )}
 
                   {auth ? (
-                    <SellerDetails seller={product.applicantId} />
+                    <SellerDetails
+                      seller={product.applicant._id}
+                      user={product.applicant}
+                    />
                   ) : (
                     <p className="text-red-500">You are not logged in!</p>
                   )}
@@ -130,15 +193,51 @@ const ProductDetails = () => {
                     auth={auth}
                     reviews={product.reviews}
                     productId={product._id}
+                    applicant={product.applicant}
                   />
 
-                  {auth?.user._id !== product.applicantId && (
-                    <button
-                      onClick={handleChat}
-                      className="bg-primary text-white px-4 py-2 rounded-md hover:bg-lightPrimary transition"
-                    >
-                      Chat Now
-                    </button>
+                  {auth?.user._id !== product.applicant._id &&
+                    auth?.user.role !== "Admin" && (
+                      <div className="flex gap-4">
+                        <button
+                          onClick={handleChat}
+                          className="bg-primary text-white px-4 py-2 rounded-md hover:bg-lightPrimary transition"
+                        >
+                          Chat Now
+                        </button>
+
+                        {existingAppointment ? (
+                          <button
+                            disabled
+                            className="bg-gray-400 text-white px-4 py-2 rounded-md cursor-not-allowed"
+                          >
+                            Appointment Already Booked
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setShowPopup(true)}
+                            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+                          >
+                            Book Appointment
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                  {/* ✅ Render Appointment Popup */}
+                  {showPopup && (
+                    <AppointmentPopup
+                      availability={product.availability}
+                      onClose={() => setShowPopup(false)}
+                      category={product.category}
+                      onSubmit={(formData) =>
+                        handleAppointmentSubmit(
+                          formData,
+                          auth.user._id,
+                          product.applicant._id
+                        )
+                      }
+                    />
                   )}
                 </div>
               </div>

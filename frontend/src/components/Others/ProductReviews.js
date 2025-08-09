@@ -2,14 +2,27 @@ import { useState } from "react";
 import Button from "./Button";
 import { IoStar, IoStarOutline } from "react-icons/io5";
 import AddReview from "./AddReview";
+import { useSelector } from "react-redux";
 
-const ProductReviews = ({ reviews, productId, auth }) => {
+const ProductReviews = ({ reviews, productId, auth, appointments }) => {
   const [addReview, setAddReview] = useState(false);
+
+  const userId = auth?.user?._id;
+  const isCaregiver = auth?.user?.role === "Caregiver";
+
+  // Check if user has completed appointment with this caregiver
+  const hasCompletedAppointment = appointments?.some(
+    (appt) =>
+      appt.client === userId &&
+      appt.caregiver._id === productId && // Assuming productId = caregiverId
+      appt.status === "completed"
+  );
+
+  const canReview = auth && !isCaregiver && hasCompletedAppointment;
+
   return (
     <div className="bg-white border rounded-lg p-4 shadow-sm mt-4">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">
-        Product Feedback
-      </h2>
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">Gig Feedback</h2>
 
       <div className="space-y-4">
         {reviews.map((r, index) => (
@@ -59,10 +72,16 @@ const ProductReviews = ({ reviews, productId, auth }) => {
       <div className="mt-4">
         <Button
           content={auth ? "Add a review" : "Please Login First"}
-          bgColor={auth ? "bg-primary" : "bg-lightPrimary"}
-          disable={!auth}
+          bgColor={canReview ? "bg-primary" : "bg-gray-300"}
+          disable={!canReview}
           setAddReview={setAddReview}
         />
+        {!canReview && (
+          <p className="text-sm text-red-500 mt-2">
+            You can only leave a review after completing an appointment with
+            this caregiver.
+          </p>
+        )}
       </div>
     </div>
   );

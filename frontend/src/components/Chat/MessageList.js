@@ -1,13 +1,21 @@
 import React, { useEffect, useRef } from "react";
 
-const MessageList = ({ messages, thisUserId }) => {
+const MessageList = ({ messages, thisUserId, loading }) => {
   const bottomRef = useRef(null);
 
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]); // run on every message update
+  }, [messages]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full text-gray-500">
+        Fetching messages...
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-y-auto h-full px-2 space-y-3 scroll-smooth scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-100">
@@ -34,7 +42,6 @@ const MessageList = ({ messages, thisUserId }) => {
           </span>
         </div>
       ))}
-      {/* Scroll anchor to bottom */}
       <div ref={bottomRef}></div>
     </div>
   );

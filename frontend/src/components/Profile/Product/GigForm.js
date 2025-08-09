@@ -5,6 +5,11 @@ import { setLoader } from "../../../redux/loaderSlice";
 import store from "../../../redux/store";
 import { setUserGigs } from "../../../redux/userGigSlice";
 import { addGig, deleteGig } from "../../../redux/gigSlice";
+import {
+  deleteGigHelper,
+  fetchUserGigsHelper,
+  submitGigHelper,
+} from "../../../lib/helpers/gigHelpers";
 
 const GigForm = () => {
   // Redux
@@ -18,83 +23,14 @@ const GigForm = () => {
 
   // GET Application related to this user
   useEffect(() => {
-    dispatch(setLoader(false));
-
     if (!userGigs?.length > 0) {
-      const fetchUserGigs = async () => {
-        dispatch(setLoader(true));
-        console.log("Loader set to true");
-
-        const response = await fetch("/api/gigs/user-gigs", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${auth.token}`, // added token to headers
-          },
-        });
-        const json = await response.json();
-
-        if (!response.ok) {
-          console.log("response is not ok");
-          dispatch(setLoader(false));
-        }
-
-        if (response.ok) {
-          console.log(json);
-          dispatch(setUserGigs(json));
-          dispatch(setLoader(false));
-          console.log("Loader set to false");
-
-          console.log(store.getState());
-        }
-      };
-
-      fetchUserGigs();
+      fetchUserGigsHelper(dispatch, auth.token);
     }
   }, [dispatch, auth]);
 
   // Handling Create Form
-  const sendApplication = async () => {
-    try {
-      dispatch(setLoader(true));
-
-      const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.title);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("category", formData.category);
-      formDataToSend.append("hourlyRate", formData.price);
-      formDataToSend.append("experience", formData.experience);
-      if (formData.cv) formDataToSend.append("cv", formData.cv);
-      if (formData.image) formDataToSend.append("image", formData.image);
-      formDataToSend.append(
-        "availability",
-        JSON.stringify(formData.availability)
-      );
-
-      const response = await fetch("/api/gigs/send", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${auth.token}`, // 🚨 Do NOT set 'Content-Type'
-        },
-        body: formDataToSend,
-      });
-
-      const json = await response.json();
-      console.log(json);
-
-      if (!response.ok) {
-        throw new Error("Failed to submit application");
-      }
-      if (response.ok) {
-        dispatch(addGig(json));
-        dispatch(setUserGigs([json])); // wrap it in an array
-        dispatch(setLoader(false));
-        console.log(store.getState());
-      }
-      alert("Form Submitted successfully");
-    } catch (error) {
-      setError(error.message);
-      dispatch(setLoader(false));
-    }
+  const sendApplication = () => {
+    submitGigHelper(dispatch, auth.token, formData);
   };
 
   // // Calling the PATCH Api         EDITING THE FORM
@@ -195,39 +131,20 @@ const GigForm = () => {
     // });
     sendApplication();
   };
-  const handleDeleteGig = async (gigId) => {
+  // Function to handle gig deletion
+  const handleDeleteGig = (gigId) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this gig?"
     );
     if (!confirmDelete) return;
-
-    try {
-      dispatch(setLoader(true));
-      const response = await fetch(`/api/gigs/delete/${gigId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete gig");
-      }
-
-      dispatch(setUserGigs([])); // Clear gigs in Redux
-      dispatch(deleteGig(gigId));
-      dispatch(setLoader(false));
-      alert("Gig deleted successfully.");
-    } catch (error) {
-      console.error(error.message);
-      dispatch(setLoader(false));
-    }
+    deleteGigHelper(dispatch, auth.token, gigId);
   };
 
   const categories = ["Pets", "Children", "Elders", "Disabled"];
 
   return (
     <>
+      {/* Displaying Gig */}
       {userGigs.length > 0 ? (
         <div className="w-full md:w-4/5 mx-auto bg-white p-8 rounded-2xl shadow-lg space-y-6">
           <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">

@@ -10,6 +10,7 @@ import { setLoader } from "../../redux/loaderSlice";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { BiErrorCircle } from "react-icons/bi";
 import { GrStatusGood } from "react-icons/gr";
+import { toast } from "react-toastify";
 
 const Users = () => {
   // Redux States
@@ -38,15 +39,20 @@ const Users = () => {
     const user = await response.json();
     console.log(user);
     if (!response.ok) {
-      setError("Status is not Updated!");
+      toast.error("Status is not Updated!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       dispatch(setLoader(false));
     }
     if (response.ok) {
-      setUpdated(true);
+      toast.success("User Updated Successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       dispatch(updateUser(user));
       dispatch(setLoader(false));
       setUserId(null);
-      store.getState();
     }
   };
 
@@ -76,18 +82,6 @@ const Users = () => {
   //   JSX start
   return (
     <div className="w-[75%]  me-[5%]">
-      {updated && (
-        <div className="error-backend flex border-2 border-green-500 bg-white p-2 rounded">
-          <GrStatusGood className=" text-green-500 mx-1 text-lg mt-0.5" />
-          <p className="text-black">User Updated Successfully!</p>
-        </div>
-      )}
-      {error && (
-        <div className="error-backend flex border-2 border-red-500 bg-white p-2 rounded">
-          <BiErrorCircle className=" text-red-500 mx-1 text-lg mt-0.5" />
-          <p className="text-black">{error}</p>
-        </div>
-      )}
       {/* Setting up the table to display users */}
       <div className="flex flex-col mx-4 overflow-hidden">
         {/*                                    Filters to display Users                  */}

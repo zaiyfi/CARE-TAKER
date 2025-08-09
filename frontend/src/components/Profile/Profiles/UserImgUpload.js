@@ -49,7 +49,7 @@ const UserImgUpload = ({ auth }) => {
         htmlFor="profile-pic"
         className="cursor-pointer inline-block px-4 py-2 bg-primary hover:bg-lightPrimary  text-white rounded text-sm"
       >
-        Edit Profile Picture
+        Edit Picture
       </label>
 
       {image && (

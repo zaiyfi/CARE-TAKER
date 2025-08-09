@@ -1,27 +1,8 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setAllUsers } from "../redux/UsersSlice";
-import store from "../redux/store";
-import Button from "./Others/Button";
+import { MdOutlineVerified } from "react-icons/md";
 
-function SellerDetails({ seller }) {
-  const dispatch = useDispatch();
-  const { users } = useSelector((state) => state.users);
-  const userLength = users?.length;
-  useEffect(() => {
-    const fetchUser = async () => {
-      const response = await fetch(`/api/auth/users`, {
-        method: "GET",
-      });
-      const json = await response.json();
-      dispatch(setAllUsers(json));
-      console.log(store.getState());
-    };
-    if (!userLength > 0) {
-      fetchUser();
-    }
-  }, [userLength, dispatch]);
-  const user = userLength > 0 ? users?.find((u) => u._id === seller) : "null";
+import { GoUnverified } from "react-icons/go";
+
+function SellerDetails({ user }) {
   const formatCellNumber = (cellNumber) => {
     return cellNumber.replace(/^(\d{2})(\d{3})/, "$1 $2 ");
   };
@@ -38,21 +19,37 @@ function SellerDetails({ seller }) {
             <p className="font-medium">Name</p>
             <p className="font-medium">Email</p>
             {user.cellNo && <p className="font-medium">Cell No</p>}
+            <p className="font-medium">Verification</p>
           </div>
           <div className="text-right space-y-1">
             <p>{user.name}</p>
             <p>{user.email}</p>
             {user.cellNo && <p>+{formatCellNumber(user.cellNo)}</p>}
+            <div className="flex items-center justify-end">
+              <span
+                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold
+      ${
+        user.verificationStatus === "Approved"
+          ? "bg-green-100 text-green-700"
+          : "bg-yellow-100 text-yellow-700"
+      }`}
+              >
+                {user.verificationStatus === "Approved" ? (
+                  <>
+                    <MdOutlineVerified className="text-base" />
+                    Verified
+                  </>
+                ) : (
+                  <>
+                    <GoUnverified className="text-base" />
+                    Not Verified
+                  </>
+                )}
+              </span>
+            </div>
           </div>
         </div>
       )}
-
-      <div className="mt-4">
-        <Button
-          link={`/seller/profile/${user._id}`}
-          content="View Full Profile"
-        />
-      </div>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { userGigSlice } from "./userGigSlice";
 import { notifSlice } from "./notifSlice";
 import chatReducer from "./chatSlice";
 import messageReducer from "./messageSlice";
+import appointmentReducer from "./appointmentsSlice";
 
 const persistConfig = {
   key: "root",
@@ -26,6 +27,7 @@ const appReducer = combineReducers({
   notif: notifSlice.reducer,
   chat: chatReducer,
   message: messageReducer,
+  appointment: appointmentReducer, // Ensure appointmentReducer is imported and added
 });
 
 const rootReducer = (state, action) => {

@@ -59,16 +59,21 @@ const sendApplication = async (req, res) => {
 const getGigs = async (req, res) => {
   try {
     const gigs = await Gig.find()
-      .sort({
-        createdAt: -1,
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "applicant", // user who created the gig
+        model: "User",
+        select: "name pic email verificationStatus", // include verification status
       })
       .populate({
-        path: "reviews.user",
+        path: "reviews.user", // users who left reviews
         model: "User",
         select: "name pic",
       });
+
     res.status(200).json(gigs);
   } catch (error) {
+    console.error("Error fetching gigs:", error);
     res.status(404).json({ error: "No Such Product Exists!" });
   }
 };
@@ -78,7 +83,7 @@ const getUserGigs = async (req, res) => {
   const user_id = req.user._id;
   try {
     console.log("Finding Gig");
-    const gigs = await Gig.find({ applicantId: user_id }).sort({
+    const gigs = await Gig.find({ applicant: user_id }).sort({
       createdAt: -1,
     });
     console.log("completed");

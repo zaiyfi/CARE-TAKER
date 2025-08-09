@@ -102,17 +102,24 @@ userSchema.statics.login = async function (email, password) {
     throw Error("All Fields are Required!");
   }
 
-  const user = await this.findOne({ email });
+  const user = await this.findOne({ email }).populate(
+    "assignedCaregiver",
+    "name email pic"
+  );
+
   if (!user) {
     throw Error("Invalid Credentials!");
   }
+
   if (user.status !== "Active") {
     throw Error("This user has been blocked!");
   }
+
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
     throw Error("Invalid Credentials!");
   }
+
   const user_id = user._id;
   return { user, user_id };
 };

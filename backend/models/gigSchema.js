@@ -32,16 +32,10 @@ const gigSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    applicantId: {
-      type: String,
+    applicant: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
-    },
-    applicantName: {
-      type: String,
-      required: true,
-    },
-    applicantEmail: {
-      type: String,
     },
     status: {
       type: String,

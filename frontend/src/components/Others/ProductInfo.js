@@ -1,22 +1,29 @@
 const ProductInfo = ({ product }) => {
   return (
     <div className="">
-      <h1 className=" ">Product Details</h1>
+      <h1 className="font-bold">About this Gig</h1>
 
       <div className="flex justify-between w-full">
         <div>
-          <p>Recomended</p>
-          <p>Experience</p>
+          <p>
+            {" "}
+            <strong>Recomended</strong>
+          </p>
+          <p>
+            {" "}
+            <strong>Experience</strong>
+            <span>(years)</span>
+          </p>
 
-          {product.location && <p>Location</p>}
-          <p>Price</p>
+          <strong>Price</strong>
         </div>
         <div className="text-center">
-          <p>{product.experience > 3 ? "Highly" : "Not bad"}</p>
-          <p>{product.experience}</p>
-
-          <p>{product.location}</p>
-          <p>$ {product.hourlyRate}</p>
+          <p>
+            {product.applicant.verificationStatus === "Approved"
+              ? "Highly"
+              : "Average"}
+          </p>
+          <p>{product.experience}</p> <p>$ {product.hourlyRate}</p>
         </div>
       </div>
     </div>

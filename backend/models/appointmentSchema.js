@@ -13,9 +13,9 @@ const appointmentSchema = new mongoose.Schema(
       required: true,
     },
     date: { type: Date, required: true },
-    time: { type: String, required: true },
-    duration: { type: Number, required: true }, // in minutes
-    serviceType: { type: String }, // e.g., "Physiotherapy"
+    startTime: { type: String, required: true }, // e.g. "10:00"
+    endTime: { type: String, required: true }, // e.g. "11:00"
+    serviceType: { type: String },
     status: {
       type: String,
       enum: ["Assigned", "Completed", "Cancelled", "Pending"],

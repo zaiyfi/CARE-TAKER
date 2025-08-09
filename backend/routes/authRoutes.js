@@ -13,6 +13,7 @@ const {
   updateImg,
   updateUserLocation,
   getNearbyUsers,
+  getAdminDetails,
 } = require("../controllers/authController");
 const upload = require("../middleware/uploadImage");
 
@@ -34,6 +35,7 @@ router.patch("/viewGig/:product_id/:user_id", requireAuth, viewedProducts);
 // Get All Users
 router.get("/users", getUsers);
 router.get("/user/:user_id", getUser);
+router.get("/admin/details", getAdminDetails);
 
 // Update user status By ADMIN
 router.patch("/update/:user_id", updateUser);

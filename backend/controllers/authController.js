@@ -49,7 +49,6 @@ const login = async (req, res) => {
 };
 
 // Getting all Users Data
-
 const getUsers = async (req, res) => {
   try {
     const users = await User.find().sort({ createdAt: -1 });
@@ -202,6 +201,55 @@ const getNearbyUsers = async (req, res) => {
   }
 };
 
+// Get Admin Details
+const getAdminDetails = async (req, res) => {
+  try {
+    // If your admin is stored in DB with a known role
+    const admin = await User.findOne({ role: "Admin" }).select(
+      "name email cellNo role createdAt"
+    );
+
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    // You can also add extra static info here for the contact page
+    const responseData = {
+      name: admin.name,
+      email: admin.email,
+      phone: admin.cellNo,
+      role: admin.role,
+      supportHours: {
+        weekdays: "Mon–Fri: 9 AM to 6 PM",
+        weekends: "Closed",
+        avgResponse: "Replies within 24 hours",
+      },
+      faq: [
+        {
+          question: "How do I contact support?",
+          answer: "You can email us directly or use the help form on our site.",
+        },
+        {
+          question: "What issues can I report?",
+          answer:
+            "Anything related to account, payments, or technical problems.",
+        },
+        {
+          question: "Do you offer phone support?",
+          answer: "Currently, we only offer email support.",
+        },
+      ],
+      notice:
+        "⚠️ The admin will never ask for your password or payment details.",
+    };
+
+    res.status(200).json(responseData);
+  } catch (error) {
+    console.error("Error fetching admin details:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -212,4 +260,5 @@ module.exports = {
   updateImg,
   updateUserLocation,
   getNearbyUsers,
+  getAdminDetails,
 };

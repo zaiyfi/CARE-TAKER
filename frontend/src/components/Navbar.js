@@ -9,9 +9,11 @@ import { IoIosLogOut } from "react-icons/io";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { SiGnuprivacyguard } from "react-icons/si";
 import { FaRegUserCircle } from "react-icons/fa";
+import { HiMenu, HiX } from "react-icons/hi";
 
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(false);
+  const [mobileMenu, setMobileMenu] = useState(false);
   const { auth } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,20 +44,52 @@ const Navbar = () => {
           Connect
         </Link>
 
+        {/* Hamburger Button (Mobile Only) */}
+        <button
+          className="md:hidden text-2xl text-gray-700"
+          onClick={() => setMobileMenu(!mobileMenu)}
+        >
+          {mobileMenu ? <HiX /> : <HiMenu />}
+        </button>
+
         {/* Main Links */}
-        <div className="flex items-center gap-6">
+        <div
+          className={`flex-col md:flex-row md:flex items-center gap-6 absolute md:static bg-white md:bg-transparent left-0 w-full md:w-auto p-4 md:p-0 top-16 md:top-auto shadow-md md:shadow-none transition-all duration-300 ${
+            mobileMenu ? "flex" : "hidden"
+          }`}
+        >
           <Link
             to="/"
             className="text-gray-700 hover:text-primary transition duration-150"
+            onClick={() => setMobileMenu(false)}
           >
             Home
           </Link>
           <Link
             to="/gigs"
             className="text-gray-700 hover:text-primary transition duration-150"
+            onClick={() => setMobileMenu(false)}
           >
             Gigs
           </Link>
+          {auth && auth.user.role !== "Admin" && (
+            <Link
+              to="/contact-admin"
+              className="text-gray-700 hover:text-primary transition duration-150"
+              onClick={() => setMobileMenu(false)}
+            >
+              Contact Admin
+            </Link>
+          )}
+          {auth && auth.user.role !== "Admin" && (
+            <Link
+              to="/privacy-policy"
+              className="text-gray-700 hover:text-primary transition duration-150"
+              onClick={() => setMobileMenu(false)}
+            >
+              Privacy Policy
+            </Link>
+          )}
 
           {/* Profile Dropdown */}
           <div className="relative">
@@ -108,7 +142,10 @@ const Navbar = () => {
                   <>
                     <Link
                       to="/login"
-                      onClick={() => setDropdown(false)}
+                      onClick={() => {
+                        setDropdown(false);
+                        setMobileMenu(false);
+                      }}
                       className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
                     >
                       <RiLoginBoxLine />
@@ -116,7 +153,10 @@ const Navbar = () => {
                     </Link>
                     <Link
                       to="/register"
-                      onClick={() => setDropdown(false)}
+                      onClick={() => {
+                        setDropdown(false);
+                        setMobileMenu(false);
+                      }}
                       className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
                     >
                       <SiGnuprivacyguard />

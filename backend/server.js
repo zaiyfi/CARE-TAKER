@@ -10,6 +10,7 @@ const gigRoutes = require("./routes/gigRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const verificationRoutes = require("./routes/verificationRoutes");
+const appointmentRoutes = require("./routes/appointmentRoutes");
 
 const http = require("http");
 const cors = require("cors");
@@ -18,7 +19,6 @@ const cors = require("cors");
 const app = express();
 
 // middleware
-
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -37,6 +37,7 @@ app.use("/api/gigs", gigRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/verify", verificationRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
 // Setup server and socket
 const server = http.createServer(app);

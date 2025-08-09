@@ -5,6 +5,7 @@ import store from "../../../redux/store";
 import UserImgUpload from "./UserImgUpload";
 import Caregiver from "./components/Caregiver";
 import Clients from "./components/Clients";
+import { MdVerifiedUser } from "react-icons/md";
 
 const ProfileDetails = () => {
   const dispatch = useDispatch();
@@ -62,7 +63,14 @@ const ProfileDetails = () => {
       </div>
       <div className="w-[73%]">
         <div className="border-b-2 pb-10">
-          <h2 className="text-4xl font-semibold w-full">{auth.user.name}</h2>
+          <h2 className="text-4xl font-semibold w-full">
+            {auth.user.name}{" "}
+            {auth.user.verificationStatus === "Approved" && (
+              <span className="text-green-600 inline-block align-middle">
+                <MdVerifiedUser title="Verified" className="inline text-2xl" />
+              </span>
+            )}
+          </h2>
           <h2 className="text-base font-normal">{auth.user.email}</h2>
         </div>
         {auth.user.role === "Caregiver" ? (

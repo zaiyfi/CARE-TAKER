@@ -9,7 +9,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 // Other Modules
-import { BsFillGrid3X3GapFill } from "react-icons/bs";
 import HomeProductsMap from "./HomeProductsMap";
 
 const HomeProducts = () => {
@@ -22,10 +21,11 @@ const HomeProducts = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000000);
   const [searchQuery, setSearchQuery] = useState("");
-  const [dynamicCat, setdynamicCat] = useState("");
+  const [dynamicCat, setdynamicCat] = useState([]);
 
   const navigate = useNavigate();
 
+  const Caregiver = auth?.user?.role === "Caregiver";
   // // Fetching Products
   useEffect(() => {
     dispatch(setLoader(false));
@@ -40,8 +40,9 @@ const HomeProducts = () => {
       setdynamicCat(json);
       console.log(dynamicCat);
     };
-    dynamicCategory();
-
+    if (dynamicCat.length === 0) {
+      dynamicCategory();
+    }
     if (!gigs?.length > 0) {
       const fetchProducts = async () => {
         dispatch(setLoader(true));
@@ -103,10 +104,11 @@ const HomeProducts = () => {
         </select>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-stretch">
         {/* Filters */}
-        <aside className="lg:w-1/4 w-full">
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+        <aside className="w-full lg:w-1/4 flex flex-col sm:flex-row lg:flex-col gap-4 h-full">
+          {/* Categories */}
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex-1">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">
               Categories
             </h2>
@@ -128,10 +130,34 @@ const HomeProducts = () => {
                 ))}
             </div>
           </div>
+
+          {/* Nearest Gigs */}
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex-1">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">
+              Nearest Gigs within 5KM
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              <button
+                disabled={Caregiver}
+                onClick={() => navigate("/gigs/near-me")}
+                className={`px-4 py-1.5 rounded-full w-full border text-sm transition
+                   bg-primary text-white ${
+                     Caregiver ? "cursor-not-allowed" : "hover:bg-lightPrimary"
+                   }`}
+              >
+                Near Me
+              </button>
+              {Caregiver && (
+                <p className="font-extralight text-xs text-gray-500">
+                  Note: Caregivers can not access this feature
+                </p>
+              )}
+            </div>
+          </div>
         </aside>
 
         {/* Products */}
-        <section className="lg:w-3/4 w-full">
+        <section className="lg:w-3/4 w-full h-full">
           {filteredProducts?.length === 0 ? (
             <div className="flex justify-center items-center h-48 text-gray-500 text-lg">
               No Gigs Available

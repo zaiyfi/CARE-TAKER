@@ -8,10 +8,14 @@ import { useSelector } from "react-redux";
 
 const ChatWindow = () => {
   const [messages, setMessages] = useState([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+
   const [chatId, setChatId] = useState(" "); // 🔑 Save chatId here
 
   const location = useLocation();
   const { sellerId } = location.state || {};
+  const { userName } = location.state || {};
+
   const { auth } = useSelector((state) => state.auth);
 
   const userId = auth.user._id; // 🔁 Replace with actual logged-in user ID
@@ -19,6 +23,7 @@ const ChatWindow = () => {
   useEffect(() => {
     const fetchMessages = async (chatId) => {
       try {
+        setLoadingMessages(true); // start loading
         const res = await fetch(
           `http://localhost:4000/api/messages/${chatId}`,
           {
@@ -33,6 +38,8 @@ const ChatWindow = () => {
         console.log("Fetched messages:", data);
       } catch (error) {
         console.error("Error fetching messages:", error);
+      } finally {
+        setLoadingMessages(false); // stop loading
       }
     };
 
@@ -100,13 +107,17 @@ const ChatWindow = () => {
       {/* Header */}
       <div className="border-b pb-3 mb-4">
         <h2 className="text-xl font-semibold text-gray-700">
-          Chat with Seller
+          {userName || "Chat with Caregiver"}
         </h2>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto space-y-3 px-2">
-        <MessageList messages={messages} thisUserId={userId} />
+        <MessageList
+          messages={messages}
+          thisUserId={userId}
+          loading={loadingMessages}
+        />
       </div>
 
       {/* Input */}

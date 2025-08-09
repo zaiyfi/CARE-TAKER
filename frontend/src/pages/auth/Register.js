@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BiErrorCircle } from "react-icons/bi";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -19,14 +20,16 @@ const Register = () => {
     setError(null);
 
     if (countryCode === "+92" && cellNo.length !== 10) {
-      setError("Pakistan numbers must be exactly 10 digits.");
+      const errMsg = "Pakistan numbers must be exactly 10 digits.";
+      setError(errMsg);
+      toast.error(errMsg);
       return;
     }
 
     const registerData = {
       name,
       email,
-      cellNo: `${countryCode}${cellNo}`, // combine if needed
+      cellNo: `${countryCode}${cellNo}`,
       password,
       role,
     };
@@ -39,29 +42,26 @@ const Register = () => {
       });
 
       const json = await response.json();
-      console.log("Full Response JSON:", json);
-      console.log("Status Code:", response.status);
 
       if (!response.ok) {
         setError(json.error || "Registration failed");
+        toast.error(json.error || "Registration failed");
         return;
       }
 
-      // ✅ Success path
-      console.log("Registration successful");
-
-      // Reset fields
+      // ✅ Success
+      toast.success("Registration successful! You can now log in.");
       setName("");
       setEmail("");
       setPassword("");
       setCellNo("");
       setRole("");
-
-      // Navigate
       navigate("/login");
     } catch (err) {
       console.error("Registration error:", err);
-      setError("An error occurred. Please try again.");
+      const fallback = "An error occurred. Please try again.";
+      setError(fallback);
+      toast.error(fallback);
     }
   };
 
