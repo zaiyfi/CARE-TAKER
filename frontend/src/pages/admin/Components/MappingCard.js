@@ -43,10 +43,10 @@ const MappingCard = ({ product, auth }) => {
     <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-md flex flex-col gap-2">
       <div>
         <h2 className="font-semibold text-gray-800 text-lg">
-          {product.applicantName}
+          {product.applicant.name}
         </h2>
-        <p className="text-gray-800  cursor-pointer text-sm">
-          <span className="text-sm text-gray-800 font-medium"> Category:</span>{" "}
+        <p className="text-gray-800 cursor-pointer text-sm">
+          <span className="text-sm text-gray-800 font-medium">Category:</span>{" "}
           {product.category}
         </p>
         <p
@@ -55,6 +55,17 @@ const MappingCard = ({ product, auth }) => {
         >
           {product.name}
         </p>
+        {/* CV Link */}
+        {product.cv && (
+          <a
+            href={product.cv}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-blue-600 underline block mt-1"
+          >
+            View CV
+          </a>
+        )}
         <p className="text-sm mt-1">
           Status:{" "}
           <span

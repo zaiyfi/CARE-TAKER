@@ -14,10 +14,20 @@ const {
   updateUserLocation,
   getNearbyUsers,
   getAdminDetails,
+  requestEmailVerification,
+  verifyEmailCode,
 } = require("../controllers/authController");
 const upload = require("../middleware/uploadImage");
 
 // Setting up Auth Routes
+
+// Step 1: Email verification request
+router.post("/send-email-otp", requestEmailVerification);
+
+// Step 2: Email verification check
+router.post("/verify-email-otp", verifyEmailCode);
+
+// Step 3: Full registration (same as before, but only after step 2)
 router.post("/register", register);
 router.post("/login", login);
 
@@ -41,6 +51,7 @@ router.get("/admin/details", getAdminDetails);
 router.patch("/update/:user_id", updateUser);
 router.put("/:id/location", updateUserLocation);
 
+// Nearby
 router.post("/nearby", getNearbyUsers);
 
 // Exporting

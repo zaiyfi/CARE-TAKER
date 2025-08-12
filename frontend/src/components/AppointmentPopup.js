@@ -1,72 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { format, addDays, parseISO } from "date-fns";
 
 const AppointmentPopup = ({ onClose, onSubmit, availability, category }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [dayName, setDayName] = useState("");
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(category || "");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [selectedCategory] = useState(category || "");
 
   // Get the weekday name from date
-  const getDayName = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", { weekday: "long" });
-  };
+  const getDayName = (dateStr) =>
+    new Date(dateStr).toLocaleDateString("en-US", { weekday: "long" });
 
-  // Handle form submission
-  const handleSubmit = () => {
-    if (!selectedSlot || !selectedDate) {
-      alert("Please select a date and time slot");
-      return;
-    }
-
-    const { startTime, endTime } = selectedSlot;
-
-    onSubmit({
-      date: selectedDate,
-      day: dayName,
-      startTime,
-      endTime,
-      category: selectedCategory,
-    });
-  };
-
-  // Get available day names from availability
+  // Available days from backend
   const availableDays = [
     ...new Set(availability?.map((slot) => slot.day.toLowerCase())),
   ];
 
-  // Disable dates not in availability
-  const isDateAvailable = (dateStr) => {
-    const day = getDayName(dateStr).toLowerCase();
-    return availableDays.includes(day);
-  };
+  // Check if selected date is available
+  const isDateAvailable = (dateStr) =>
+    availableDays.includes(getDayName(dateStr).toLowerCase());
 
-  const handleDateChange = (e) => {
-    const dateStr = e.target.value;
-    const day = getDayName(dateStr);
-
-    // Prevent selecting unavailable days
-    if (!isDateAvailable(dateStr)) {
-      setSelectedDate("");
-      setDayName("");
-      setSelectedSlot(null);
-      return;
-    }
-
-    setSelectedDate(dateStr);
-    setDayName(day);
-    setSelectedSlot(null); // Reset slot
-  };
-
-  // Filter time slots for selected day
-  const filteredSlots = availability?.filter(
-    (slot) => slot.day.toLowerCase() === dayName.toLowerCase()
-  );
-
-  const getTodayDate = () => format(addDays(new Date(), 1), "yyyy-MM-dd");
-
-  // Generate next 14 available days
+  // Generate next 30 available dates
   const generateAvailableDates = () => {
     const dates = [];
     let date = addDays(new Date(), 1);
@@ -80,9 +35,36 @@ const AppointmentPopup = ({ onClose, onSubmit, availability, category }) => {
 
   const availableDates = generateAvailableDates();
 
+  const handleDateChange = (e) => {
+    const dateStr = e.target.value;
+    if (!isDateAvailable(dateStr)) {
+      setSelectedDate("");
+      setDayName("");
+      return;
+    }
+    setSelectedDate(dateStr);
+    setDayName(getDayName(dateStr));
+  };
+
+  const handleSubmit = () => {
+    if (!selectedDate || !startTime || !endTime) {
+      alert("Please select a date, start time, and end time");
+      return;
+    }
+
+    onSubmit({
+      date: selectedDate,
+      day: dayName,
+      startTime,
+      endTime,
+      category: selectedCategory,
+    });
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg w-full max-w-md space-y-4 relative shadow-lg">
+        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-2 right-3 text-gray-600 text-xl hover:text-black"
@@ -94,7 +76,7 @@ const AppointmentPopup = ({ onClose, onSubmit, availability, category }) => {
           Book Appointment
         </h2>
 
-        {/* Date Picker */}
+        {/* Date picker */}
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">
             Select Appointment Date
@@ -113,39 +95,29 @@ const AppointmentPopup = ({ onClose, onSubmit, availability, category }) => {
           </select>
         </div>
 
-        {/* Time Slots */}
-        {selectedDate ? (
-          filteredSlots?.length > 0 ? (
-            <div className="text-sm bg-gray-100 p-2 rounded">
-              <h3 className="font-medium mb-1 text-gray-700">
-                Available Time Slots:
-              </h3>
-              <ul className="space-y-2">
-                {filteredSlots.map((slot, index) => (
-                  <li
-                    key={index}
-                    className={`p-2 rounded border cursor-pointer transition-all duration-150 ${
-                      selectedSlot === slot
-                        ? "bg-primary text-white"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                    onClick={() => setSelectedSlot(slot)}
-                  >
-                    {slot.startTime} - {slot.endTime}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">
-              No slots available for this date.
-            </p>
-          )
-        ) : (
-          <p className="text-sm text-gray-500">
-            Please select a date to view available time slots.
-          </p>
-        )}
+        {/* Start Time */}
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            Start Time
+          </label>
+          <input
+            type="time"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            className="border border-gray-300 rounded p-2 text-sm"
+          />
+        </div>
+
+        {/* End Time */}
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">End Time</label>
+          <input
+            type="time"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            className="border border-gray-300 rounded p-2 text-sm"
+          />
+        </div>
 
         {/* Category */}
         <div className="flex flex-col gap-1">
@@ -158,6 +130,7 @@ const AppointmentPopup = ({ onClose, onSubmit, availability, category }) => {
           />
         </div>
 
+        {/* Submit */}
         <button
           className="bg-primary text-white w-full py-2 rounded hover:bg-lightPrimary transition-colors duration-200"
           onClick={handleSubmit}

@@ -57,7 +57,6 @@ const acceptGig = async (req, res) => {
     }
 
     res.status(201).json({
-      message: "Appointment created successfully",
       appointment,
     });
   } catch (error) {

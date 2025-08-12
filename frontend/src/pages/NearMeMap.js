@@ -1,151 +1,108 @@
-import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import L from "leaflet";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-// Fix default icon
+// Fix Leaflet default marker issue
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
-
-// Custom icon for nearby users
-const gigIcon = new L.Icon({
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
   iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-const NearMeMap = () => {
-  const [myLocation, setMyLocation] = useState(null);
+// Custom icon for current user
+const userIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png", // a blue location icon
+  iconSize: [32, 32], // size of the icon
+  iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
+  popupAnchor: [0, -32], // point from which the popup should open relative to the iconAnchor
+});
+
+export default function NearMeMap() {
+  const [userLocation, setUserLocation] = useState(null);
   const [nearbyUsers, setNearbyUsers] = useState([]);
-  const { auth } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const coords = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-        setMyLocation(coords);
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        setUserLocation([lat, lng]);
 
         try {
-          const res = await fetch("/api/auth/nearby", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(coords),
+          const { data } = await axios.post("/api/auth/nearby", {
+            latitude: lat,
+            longitude: lng,
           });
-
-          const data = await res.json();
-          setNearbyUsers(data.users);
-        } catch (error) {
-          console.error("Failed to fetch nearby users:", error);
+          console.log(data);
+          setNearbyUsers(data.users || []);
+        } catch (err) {
+          toast.error("Failed to fetch nearby caregivers.");
+          console.error("Error fetching nearby users:", err);
         }
       },
       (err) => {
         console.error("Geolocation error:", err);
+        toast.error(
+          "Unable to fetch your location. Please refresh the page and allow location access."
+        );
+        setUserLocation([37.7749, -122.4194]);
       }
     );
   }, []);
 
-  const handleChat = async (sellerId, userName) => {
-    try {
-      const res = await fetch("http://localhost:4000/api/chats", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.token}`,
-        },
-        body: JSON.stringify({ sellerId }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        navigate("/chat", {
-          state: {
-            chatId: data._id,
-            sellerId,
-            userName,
-          },
-        });
-      } else {
-        console.error("Failed to start chat:", data.message);
-      }
-    } catch (error) {
-      console.error("Error starting chat:", error);
-    }
-  };
+  if (!userLocation) {
+    return <p>Loading map...</p>;
+  }
 
   return (
-    <div className="max-w-6xl mx-auto py-6 px-4">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">
-        Nearby Caregivers
-      </h2>
+    <div style={{ height: "500px", position: "relative" }}>
+      <MapContainer
+        center={userLocation}
+        zoom={13}
+        style={{ height: "100%", width: "100%" }}
+      >
+        <TileLayer
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
+        />
 
-      {myLocation ? (
-        <MapContainer
-          center={[myLocation.latitude, myLocation.longitude]}
-          zoom={13}
-          style={{ height: "500px", width: "100%", borderRadius: "8px" }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+        {/* User's own location with custom icon */}
+        <Marker position={userLocation} icon={userIcon}>
+          <Popup>You are here</Popup>
+        </Marker>
 
-          {/* Your location */}
-          <Marker position={[myLocation.latitude, myLocation.longitude]}>
-            <Popup>You are here</Popup>
-          </Marker>
+        {/* 5km radius circle */}
+        <Circle
+          center={userLocation}
+          radius={5000}
+          pathOptions={{ color: "blue", fillColor: "blue", fillOpacity: 0.1 }}
+        />
 
-          {/* 5km circle */}
-          <Circle
-            center={[myLocation.latitude, myLocation.longitude]}
-            radius={5000}
-            pathOptions={{ color: "blue", fillOpacity: 0.1 }}
-          />
+        {/* Nearby caregivers */}
+        {nearbyUsers.map((user, idx) => {
+          const coords = user.location?.coordinates;
+          if (!coords || coords.length < 2) return null;
+          const [lng, lat] = coords;
 
-          {/* Other users */}
-          {nearbyUsers
-            .filter((user) => user._id !== auth.user._id)
-            .map((user) => (
-              <Marker
-                key={user._id}
-                position={[
-                  user.location.coordinates[1],
-                  user.location.coordinates[0],
-                ]}
-                icon={gigIcon}
-              >
-                <Popup>
-                  <div className="text-sm">
-                    <strong>{user.name}</strong>
-                    <br />
-                    Role: {user.role}
-                    <button
-                      className="block mt-2 text-blue-600 hover:underline"
-                      onClick={() => handleChat(user._id, user.name)}
-                    >
-                      Chat Now
-                    </button>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-        </MapContainer>
-      ) : (
-        <p className="text-gray-500">Getting your location...</p>
-      )}
+          return (
+            <Marker key={idx} position={[lat, lng]}>
+              <Popup>
+                <b>{user.name}</b>
+                <br />
+                Role: {user.role}
+              </Popup>
+            </Marker>
+          );
+        })}
+      </MapContainer>
     </div>
   );
-};
-
-export default NearMeMap;
+}

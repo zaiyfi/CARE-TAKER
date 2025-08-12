@@ -98,13 +98,17 @@ const Appointment = () => {
       <h3 className="text-2xl font-semibold mb-4">My Upcoming Appointments</h3>
 
       <ul className="space-y-3">
-        {filteredAppointments.map((appt) => (
-          <AppointmentCard
-            key={appt._id}
-            appt={appt}
-            onUpdateStatus={handleUpdateStatus}
-          />
-        ))}
+        {filteredAppointments.length > 0 ? (
+          filteredAppointments.map((appt) => (
+            <AppointmentCard
+              key={appt._id}
+              appt={appt}
+              onUpdateStatus={handleUpdateStatus}
+            />
+          ))
+        ) : (
+          <p>No Appointments Yet!</p>
+        )}
       </ul>
     </div>
   );

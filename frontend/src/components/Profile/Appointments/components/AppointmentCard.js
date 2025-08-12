@@ -4,6 +4,14 @@ const AppointmentCard = ({ appt, onUpdateStatus }) => {
   const apptDate = new Date(appt.date);
   const formattedDate = format(apptDate, "EEEE, MMM d, yyyy");
 
+  // Parse endTime string into actual datetime
+  const [endHour, endMinute] = appt.endTime.split(":").map(Number);
+  const apptEndDateTime = new Date(apptDate);
+  apptEndDateTime.setHours(endHour, endMinute, 0, 0);
+
+  const now = new Date();
+  const canComplete = now >= apptEndDateTime;
+
   return (
     <li className="border p-4 rounded-lg shadow-sm bg-white">
       <div className="flex justify-between items-start">
@@ -22,8 +30,6 @@ const AppointmentCard = ({ appt, onUpdateStatus }) => {
             <p className="text-sm text-gray-600">
               {formattedDate} @ {appt.startTime} - {appt.endTime}
             </p>
-
-            {/* Service Type */}
             <p className="text-sm text-gray-700 font-semibold mt-1">
               Service: {appt.serviceType}
             </p>
@@ -37,6 +43,8 @@ const AppointmentCard = ({ appt, onUpdateStatus }) => {
                 ? "text-yellow-500"
                 : appt.status === "Cancelled"
                 ? "text-red-500"
+                : appt.status === "Completed"
+                ? "text-blue-500"
                 : "text-green-600"
             }`}
           >
@@ -55,12 +63,24 @@ const AppointmentCard = ({ appt, onUpdateStatus }) => {
           </button>
         )}
 
-        {appt.status !== "Cancelled" && (
+        {appt.status !== "Cancelled" && appt.status !== "Completed" && (
           <button
             className="px-3 py-1 bg-red-500 text-white text-sm rounded"
             onClick={() => onUpdateStatus(appt._id, "Cancelled")}
           >
             Cancel
+          </button>
+        )}
+
+        {appt.status === "Assigned" && (
+          <button
+            className={`px-3 py-1 text-white text-sm rounded ${
+              canComplete ? "bg-blue-500" : "bg-gray-400 cursor-not-allowed"
+            }`}
+            onClick={() => canComplete && onUpdateStatus(appt._id, "Completed")}
+            disabled={!canComplete}
+          >
+            Complete
           </button>
         )}
       </div>

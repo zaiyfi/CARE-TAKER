@@ -34,18 +34,21 @@ export const useLogin = () => {
       }
 
       dispatch(setLoader(false));
+      navigate("/gigs");
       dispatch(setUser(json));
       dispatch(setNotif("logged in success"));
       toast.success("Login successful!");
-      navigate("/gigs");
 
+      console.log("getting current locaiton");
       navigator.geolocation.getCurrentPosition(
         async (position) => {
+          console.log(position);
+
           const coords = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           };
-
+          console.log("got curruent location!");
           const response = await fetch(`/api/auth/${json.user._id}/location`, {
             method: "PUT",
             headers: {
@@ -53,7 +56,9 @@ export const useLogin = () => {
             },
             body: JSON.stringify(coords),
           });
-
+          if (response.ok) {
+            console.log("response ok");
+          }
           const res = await response.json();
           console.log("Location updated", res);
         },

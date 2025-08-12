@@ -54,12 +54,6 @@ const ProfileDetails = () => {
           />
           {isLoggedIn && <UserImgUpload auth={auth} />}
         </div>
-
-        <h2 className="w-full text-lg font-medium border-b-2 border-black text-center">
-          {isLoggedIn
-            ? `${gigLength} Saved Gigs`
-            : `${gigLength} Published Gigs`}
-        </h2>
       </div>
       <div className="w-[73%]">
         <div className="border-b-2 pb-10">

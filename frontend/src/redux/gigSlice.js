@@ -30,7 +30,7 @@ export const gigSlice = createSlice({
     // },
     setGigReview: (state, action) => {
       const updatedGig = action.payload;
-      const gigIndex = state.gigs.findIndex((g) => g._id === updateGig._id);
+      const gigIndex = state.gigs.findIndex((g) => g._id === updatedGig._id);
       if (gigIndex !== -1) {
         state.gigs[gigIndex].reviews = updatedGig.reviews;
       } else {

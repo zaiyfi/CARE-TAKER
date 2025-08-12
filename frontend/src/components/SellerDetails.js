@@ -1,5 +1,4 @@
 import { MdOutlineVerified } from "react-icons/md";
-
 import { GoUnverified } from "react-icons/go";
 
 function SellerDetails({ user }) {
@@ -19,20 +18,38 @@ function SellerDetails({ user }) {
             <p className="font-medium">Name</p>
             <p className="font-medium">Email</p>
             {user.cellNo && <p className="font-medium">Cell No</p>}
-            <p className="font-medium">Verification</p>
+            <p className="font-medium">Docs Verification</p>
           </div>
           <div className="text-right space-y-1">
             <p>{user.name}</p>
-            <p>{user.email}</p>
+
+            {/* Email with verification badge */}
+            <p className="flex items-center justify-end gap-1">
+              {user.email}
+              {user.isEmailVerified ? (
+                <MdOutlineVerified
+                  className="text-green-600"
+                  title="Email Verified"
+                />
+              ) : (
+                <GoUnverified
+                  className="text-red-500"
+                  title="Email Not Verified"
+                />
+              )}
+            </p>
+
             {user.cellNo && <p>+{formatCellNumber(user.cellNo)}</p>}
+
+            {/* General account verification */}
             <div className="flex items-center justify-end">
               <span
                 className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold
-      ${
-        user.verificationStatus === "Approved"
-          ? "bg-green-100 text-green-700"
-          : "bg-yellow-100 text-yellow-700"
-      }`}
+                  ${
+                    user.verificationStatus === "Approved"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}
               >
                 {user.verificationStatus === "Approved" ? (
                   <>

@@ -1,6 +1,7 @@
 // lib/helpers/appointments.js
 import { toast } from "react-toastify";
 import { setAppointments } from "../../redux/appointmentsSlice";
+import store from "../../redux/store";
 
 export const fetchAppointments = async (dispatch, token) => {
   try {
@@ -14,6 +15,7 @@ export const fetchAppointments = async (dispatch, token) => {
 
     if (res.ok) {
       dispatch(setAppointments(data));
+      console.log(store.getState());
     } else {
       toast.error(data.message || "Failed to fetch appointments");
     }

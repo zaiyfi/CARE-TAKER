@@ -21,7 +21,6 @@ export const fetchUserGigsHelper = async (dispatch, token) => {
     if (response.ok) {
       dispatch(setUserGigs(json));
       dispatch(setLoader(false));
-      toast.success("Your Application fetched successfully!");
     }
 
     if (!response.ok) {
@@ -71,7 +70,7 @@ export const submitGigHelper = async (dispatch, token, formData) => {
 
     dispatch(addGig(json));
     dispatch(setUserGigs([json]));
-    toast.success("Form submitted successfully!");
+    toast.success("Application submitted successfully!");
     dispatch(setLoader(false));
   } catch (error) {
     toast.error("An error occurred while submitting the application.");

@@ -194,6 +194,7 @@ const ProductDetails = () => {
                     reviews={product.reviews}
                     productId={product._id}
                     applicant={product.applicant}
+                    appointments={appointments}
                   />
 
                   {auth?.user._id !== product.applicant._id &&

@@ -39,8 +39,8 @@ const Login = () => {
         <div className="mb-6 text-sm text-gray-700 grid grid-cols-3 gap-2">
           <div className="bg-gray-50 p-2 rounded border">
             <h3 className="font-semibold">Admin:</h3>
-            <p className="text-xs">siraj12@gmail.com</p>
-            <p className="text-xs">siraj12#G</p>
+            <p className="text-xs">huzaifatayyab12@gmail.com</p>
+            <p className="text-xs">huzaifa12#G</p>
           </div>
           <div className="bg-gray-50 p-2 rounded border">
             <h3 className="font-semibold">Caregiver:</h3>

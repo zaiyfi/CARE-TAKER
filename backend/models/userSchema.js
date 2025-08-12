@@ -59,6 +59,8 @@ const userSchema = new mongoose.Schema(
       required: true,
       enum: ["Client", "Caregiver", "Admin"],
     },
+    isEmailVerified: { type: Boolean, default: false },
+
     assignedClients: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // if caregiver
     assignedCaregiver: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // if client
 

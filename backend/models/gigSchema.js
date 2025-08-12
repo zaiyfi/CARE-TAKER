@@ -64,6 +64,9 @@ const gigSchema = new mongoose.Schema(
           type: String, // Format: "22:00" for 10PM
           required: true,
         },
+        fullDay: {
+          type: Boolean,
+        },
       },
     ],
     reviews: [

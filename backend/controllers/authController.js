@@ -1,5 +1,8 @@
 const User = require("../models/userSchema");
 const Gig = require("../models/gigSchema");
+const sendVerificationEmail = require("../utils/sendVerificationEmail");
+const EmailOtp = require("../models/otpSchema");
+const crypto = require("crypto");
 const cloudinary = require("../cloudinaryConfig");
 
 const jwt = require("jsonwebtoken");
@@ -31,6 +34,77 @@ const register = async (req, res) => {
     res.status(200).json({ message: "User registered successfully" });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+};
+// STEP 1: Request Email & Send Verification Code
+const requestEmailVerification = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  try {
+    // Check if email already exists
+    const existingUser = await User.findOne({ email });
+    console.log("existing user");
+    if (existingUser) {
+      return res.status(400).json({ error: "Email is already registered" });
+    }
+
+    console.log("otp");
+    // Generate code
+    const code = crypto.randomInt(100000, 999999).toString();
+
+    console.log("crypto worked!");
+    // Save in DB for verification
+    await EmailOtp.findOneAndUpdate(
+      { email },
+      { otp: code, createdAt: new Date() },
+      { upsert: true, new: true }
+    );
+    console.log("email otp");
+
+    // Send email
+    await sendVerificationEmail(email, code);
+
+    res.status(200).json({ message: "Verification code sent to email" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to send verification email" });
+  }
+};
+
+// STEP 2: Verify Email & Proceed to Full Registration
+const verifyEmailCode = async (req, res) => {
+  const { email, code } = req.body;
+  console.log(email, code);
+  if (!email || !code) {
+    return res.status(400).json({ error: "Email and code are required" });
+  }
+
+  try {
+    const record = await EmailOtp.findOne({ email });
+    console.log("founded email");
+
+    if (!record) {
+      return res.status(400).json({ error: "No verification request found" });
+    }
+
+    if (record.otp !== code) {
+      return res.status(400).json({ error: "Invalid verification code" });
+    }
+    console.log("code matched");
+    await User.findOneAndUpdate(
+      { email },
+      { $set: { isEmailVerified: true } },
+      { new: true }
+    );
+    // Success — allow frontend to proceed to the next registration step
+    res
+      .status(200)
+      .json({ verified: true, message: "Email verified successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Verification failed" });
   }
 };
 
@@ -147,6 +221,7 @@ const updateUserLocation = async (req, res) => {
   const { latitude, longitude } = req.body;
 
   try {
+    console.log("starting to update user location");
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
       {
@@ -159,7 +234,7 @@ const updateUserLocation = async (req, res) => {
       },
       { new: true } // ensure updated document is returned
     );
-
+    console.log("user location Updated");
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -177,7 +252,7 @@ const getNearbyUsers = async (req, res) => {
 
   try {
     // Step 1: Find all user IDs who have created a gig
-    const gigCreators = await Gig.distinct("applicantId");
+    const gigCreators = await Gig.distinct("applicant");
 
     // Step 2: Query users within 5 km who are also gig creators
     const users = await User.find({
@@ -261,4 +336,6 @@ module.exports = {
   updateUserLocation,
   getNearbyUsers,
   getAdminDetails,
+  requestEmailVerification,
+  verifyEmailCode,
 };

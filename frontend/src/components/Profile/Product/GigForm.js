@@ -204,7 +204,10 @@ const GigForm = () => {
                           key={idx}
                           className="bg-green-100 text-green-800 px-3 py-1 text-sm rounded-full border border-green-300"
                         >
-                          {slot.day} {slot.startTime} - {slot.endTime}
+                          {slot.day}{" "}
+                          {slot.fullDay
+                            ? "Available All Day"
+                            : `${slot.startTime} - ${slot.endTime}`}
                         </span>
                       ))}
                     </div>
@@ -233,6 +236,7 @@ const GigForm = () => {
           </div>
         </div>
       ) : (
+        // Caregiver    Application
         <div className="w-full md:w-5/6 mx-auto bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">Caregiver Application</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -359,59 +363,111 @@ const GigForm = () => {
                 "Friday",
                 "Saturday",
                 "Sunday",
-              ].map((day) => (
-                <div key={day} className="mb-2 flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    id={`day-${day}`}
-                    onChange={(e) => {
-                      const isChecked = e.target.checked;
-                      setFormData((prev) => {
-                        let updated = [...prev.availability];
-                        if (isChecked) {
-                          updated.push({ day, startTime: "", endTime: "" });
-                        } else {
-                          updated = updated.filter((item) => item.day !== day);
-                        }
-                        return { ...prev, availability: updated };
-                      });
-                    }}
-                  />
-                  <label htmlFor={`day-${day}`} className="w-24">
-                    {day}
-                  </label>
-                  <input
-                    type="time"
-                    onChange={(e) => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        availability: prev.availability.map((slot) =>
-                          slot.day === day
-                            ? { ...slot, startTime: e.target.value }
-                            : slot
-                        ),
-                      }));
-                    }}
-                    className="border px-2 py-1 rounded"
-                    disabled={!formData.availability.find((a) => a.day === day)}
-                  />
-                  <input
-                    type="time"
-                    onChange={(e) => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        availability: prev.availability.map((slot) =>
-                          slot.day === day
-                            ? { ...slot, endTime: e.target.value }
-                            : slot
-                        ),
-                      }));
-                    }}
-                    className="border px-2 py-1 rounded"
-                    disabled={!formData.availability.find((a) => a.day === day)}
-                  />
-                </div>
-              ))}
+              ].map((day) => {
+                const dayData = formData.availability.find(
+                  (a) => a.day === day
+                );
+                const isChecked = !!dayData;
+                const isFullDay = dayData?.fullDay || false;
+
+                return (
+                  <div key={day} className="mb-2 flex gap-2 items-center">
+                    {/* Day checkbox */}
+                    <input
+                      type="checkbox"
+                      id={`day-${day}`}
+                      checked={isChecked}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setFormData((prev) => {
+                          let updated = [...prev.availability];
+                          if (checked) {
+                            updated.push({
+                              day,
+                              startTime: "",
+                              endTime: "",
+                              fullDay: false,
+                            });
+                          } else {
+                            updated = updated.filter(
+                              (item) => item.day !== day
+                            );
+                          }
+                          return { ...prev, availability: updated };
+                        });
+                      }}
+                    />
+                    <label htmlFor={`day-${day}`} className="w-24">
+                      {day}
+                    </label>
+
+                    {/* Full Day toggle */}
+                    {isChecked && (
+                      <>
+                        <select
+                          value={isFullDay ? "full" : "custom"}
+                          onChange={(e) => {
+                            const full = e.target.value === "full";
+                            setFormData((prev) => ({
+                              ...prev,
+                              availability: prev.availability.map((slot) =>
+                                slot.day === day
+                                  ? {
+                                      ...slot,
+                                      fullDay: full,
+                                      startTime: full ? "00:00" : "",
+                                      endTime: full ? "23:59" : "",
+                                    }
+                                  : slot
+                              ),
+                            }));
+                          }}
+                          className="border px-2 py-1 rounded"
+                        >
+                          <option value="custom">Custom Hours</option>
+                          <option value="full">Available 24 Hours</option>
+                        </select>
+
+                        {/* Start time */}
+                        <input
+                          type="time"
+                          value={dayData?.startTime || ""}
+                          onChange={(e) => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              availability: prev.availability.map((slot) =>
+                                slot.day === day
+                                  ? { ...slot, startTime: e.target.value }
+                                  : slot
+                              ),
+                            }));
+                          }}
+                          className="border px-2 py-1 rounded"
+                          disabled={isFullDay}
+                        />
+
+                        {/* End time */}
+                        <input
+                          type="time"
+                          value={dayData?.endTime || ""}
+                          onChange={(e) => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              availability: prev.availability.map((slot) =>
+                                slot.day === day
+                                  ? { ...slot, endTime: e.target.value }
+                                  : slot
+                              ),
+                            }));
+                          }}
+                          className="border px-2 py-1 rounded"
+                          disabled={isFullDay}
+                        />
+                      </>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             <button

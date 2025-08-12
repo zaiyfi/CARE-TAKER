@@ -16,15 +16,13 @@ const sendApplication = async (req, res) => {
 
   try {
     // Upload CV and Image to Cloudinary
-    console.log("Files:", req.files);
-    console.log("CV", req.files["cv"]);
+
     const cvUpload = req.files["cv"]
       ? await cloudinary.uploader.upload(req.files["cv"][0].path, {
           resource_type: "auto",
           folder: "MarketPlace/CVs",
         })
       : null;
-    console.log("CV Upload:", cvUpload);
     const imageUpload = req.files["image"]
       ? await cloudinary.uploader.upload(req.files["image"][0].path, {
           folder: "MarketPlace/Images",
@@ -43,9 +41,7 @@ const sendApplication = async (req, res) => {
       availability: parsedAvailability,
       cv: cvUpload ? cvUpload.secure_url : null,
       image: imageUpload ? imageUpload.secure_url : null,
-      applicantId: user._id,
-      applicantName: user.name,
-      applicantEmail: user.email,
+      applicant: user._id,
     });
 
     res.status(200).json(gig);
@@ -63,7 +59,7 @@ const getGigs = async (req, res) => {
       .populate({
         path: "applicant", // user who created the gig
         model: "User",
-        select: "name pic email verificationStatus", // include verification status
+        select: "name pic email verificationStatus isEmailVerified location", // include verification status
       })
       .populate({
         path: "reviews.user", // users who left reviews

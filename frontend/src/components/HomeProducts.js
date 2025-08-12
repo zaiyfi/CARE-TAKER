@@ -21,7 +21,7 @@ const HomeProducts = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000000);
   const [searchQuery, setSearchQuery] = useState("");
-  const [dynamicCat, setdynamicCat] = useState([]);
+  const [dynamicCat, setDynamicCat] = useState([]);
 
   const navigate = useNavigate();
 
@@ -29,20 +29,7 @@ const HomeProducts = () => {
   // // Fetching Products
   useEffect(() => {
     dispatch(setLoader(false));
-    // Fetching dynamic categories
-    const dynamicCategory = async () => {
-      const response = await fetch("/api/gigs/categories", {
-        method: "GET",
-      });
-      const json = await response.json();
 
-      console.log(json);
-      setdynamicCat(json);
-      console.log(dynamicCat);
-    };
-    if (dynamicCat.length === 0) {
-      dynamicCategory();
-    }
     if (!gigs?.length > 0) {
       const fetchProducts = async () => {
         dispatch(setLoader(true));
@@ -69,6 +56,13 @@ const HomeProducts = () => {
     }
   }, [dispatch, auth]);
 
+  useEffect(() => {
+    if (Array.isArray(gigs) && gigs.length > 0) {
+      const categories = gigs.map((gig) => gig.category).filter(Boolean); // remove null/undefined
+      const uniqueCategories = [...new Set(categories)];
+      setDynamicCat(uniqueCategories);
+    }
+  }, [gigs]);
   // Search Query Filter
   const handleSearchQuery = (e) => {
     const newQuery = e.target.value;
@@ -113,21 +107,20 @@ const HomeProducts = () => {
               Categories
             </h2>
             <div className="flex flex-wrap gap-2">
-              {Array.isArray(dynamicCat) &&
-                ["All", ...dynamicCat].map((cat) => (
-                  <button
-                    key={cat}
-                    value={cat}
-                    onClick={(e) => setFilters(e.target.value)}
-                    className={`px-4 py-1.5 rounded-full border text-sm transition ${
-                      filters === cat
-                        ? "bg-primary text-white"
-                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
+              {["All", ...dynamicCat].map((cat) => (
+                <button
+                  key={cat}
+                  value={cat}
+                  onClick={(e) => setFilters(e.target.value)}
+                  className={`px-4 py-1.5 rounded-full border text-sm transition ${
+                    filters === cat
+                      ? "bg-primary text-white"
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
           </div>
 
