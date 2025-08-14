@@ -46,17 +46,14 @@ const AdminTable = () => {
       {/* Setting up the table to display Products */}
       <div className="w-[100%]  flex flex-col">
         <div className="sm:-mx-6 lg:-mx-4">
-          <div className="inline-block md:w-full py-2 sm:px-6 lg:px-8 ">
-            {/* GIG CARDS GRID */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-              {gigs &&
-                gigs.length > 0 &&
+          <div className="w-full md:w-[75%] md:me-[5%]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 p-2 sm:p-4">
+              {gigs && gigs.length > 0 ? (
                 gigs.map((gig) => (
                   <MappingCard key={gig._id} product={gig} auth={auth} />
-                ))}
-
-              {(!gigs || gigs.length === 0) && (
-                <div className="p-6 text-lg font-bold text-center text-gray-700">
+                ))
+              ) : (
+                <div className="p-6 text-lg font-bold text-center text-gray-700 col-span-full">
                   No Gigs!
                 </div>
               )}

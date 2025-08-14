@@ -27,8 +27,7 @@ const Profile = () => {
       )}
 
       {/* Sidebar / Tab Menu */}
-      {/* Sidebar / Tab Menu */}
-      <div className="flex md:flex-col w-full md:w-[15%] bg-white border-b md:border-b-0 md:border-r shadow-sm">
+      <div className="flex md:flex-col w-full md:w-[10%] md:h-[80vh] bg-white border-b md:border-b-0 md:border-r shadow-sm">
         {[
           { id: 1, icon: FaUser, label: "Profile" },
           ...(auth?.user?.role === "Caregiver"

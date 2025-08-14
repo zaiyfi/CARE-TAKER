@@ -1,68 +1,56 @@
 import { useState } from "react";
-import Products from "./Products";
-import Users from "./users";
-
-// React Icons
-import { FaUser } from "react-icons/fa";
+import { MdDashboard } from "react-icons/md";
+import { FaUsers } from "react-icons/fa";
 import { PiPackageFill } from "react-icons/pi";
-
-import { GrDocumentVerified } from "react-icons/gr";
+import { SiReadthedocs } from "react-icons/si";
+import Users from "./users";
 import Verifications from "./Verifications";
+import Products from "./Products";
+import AdminDashboard from "./AdminDashboard";
 
 const Admin = () => {
-  const [tab, setTab] = useState(1);
-  const [activeButton, setActiveButton] = useState(1);
+  const [activeTab, setActiveTab] = useState(1);
 
-  const tabActiveIndex = (tabIndex) => {
-    setTab(tabIndex);
-    setActiveButton(tabIndex);
-  };
+  const tabs = [
+    { id: 1, icon: MdDashboard, label: "Dashboard" },
+    { id: 2, icon: FaUsers, label: "Users" },
+    { id: 3, icon: PiPackageFill, label: "Products" },
+    { id: 4, icon: SiReadthedocs, label: "Verifications" },
+  ];
+
   return (
-    <div className="flex my-4  select-none">
-      {/* Sidebar Links */}
-      <div className="tab border-e md:w-[15%] bg-gray-50 shadow-inner h-fit rounded-xl p-2">
-        <div
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer mb-2 transition-colors ${
-            activeButton === 1
-              ? "bg-lightSecondary text-primary font-semibold"
-              : "hover:bg-gray-100 text-gray-700"
-          }`}
-          onClick={() => tabActiveIndex(1)}
-        >
-          <PiPackageFill className="text-lg" />
-          <span>Gigs</span>
-        </div>
-
-        <div
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer mb-2 transition-colors ${
-            activeButton === 2
-              ? "bg-lightSecondary text-primary font-semibold"
-              : "hover:bg-gray-100 text-gray-700"
-          }`}
-          onClick={() => tabActiveIndex(2)}
-        >
-          <FaUser className="text-lg" />
-          <span>Users</span>
-        </div>
-
-        <div
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-            activeButton === 3
-              ? "bg-lightSecondary text-primary font-semibold"
-              : "hover:bg-gray-100 text-gray-700"
-          }`}
-          onClick={() => tabActiveIndex(3)}
-        >
-          <GrDocumentVerified className="text-lg" />
-
-          <span>Verifications</span>
-        </div>
+    <div className="flex flex-col md:flex-row my-4 select-none h-[calc(100vh-2rem)]">
+      {/* Sidebar */}
+      <div className="flex md:flex-col w-full md:w-[14%] bg-white border-b md:border-b-0 md:border-r shadow-sm md:h-[80vh]">
+        {tabs.map(({ id, icon: Icon, label }) => (
+          <div
+            key={id}
+            className={`flex-1 flex flex-col items-center gap-2 py-4 cursor-pointer transition-all duration-300
+        ${
+          activeTab === id
+            ? "bg-primary text-white font-semibold shadow-md scale-105"
+            : "hover:bg-lightPrimary text-gray-700 hover:shadow-sm"
+        }
+      `}
+            style={{
+              borderRadius: "8px",
+              margin: "4px",
+            }}
+            onClick={() => setActiveTab(id)}
+          >
+            <Icon className="text-2xl" />
+            <span className="text-sm md:text-base">{label}</span>
+          </div>
+        ))}
       </div>
 
-      {/* Components */}
-      {tab === 1 && <Products />}
-      {tab === 2 && <Users />}
-      {tab === 3 && <Verifications />}
+      {/* Content Area */}
+      <div className="flex-1 p-4 overflow-y-auto h-full">
+        {activeTab === 1 && <AdminDashboard />}
+        {activeTab === 2 && <Users />}
+        {activeTab === 3 && <Products />}
+        {activeTab === 4 && <Verifications />}
+      </div>
     </div>
   );
 };

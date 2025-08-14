@@ -100,9 +100,22 @@ const updateAppointment = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const getAppointmentsForAdmin = async (req, res) => {
+  try {
+    const appointments = await Appointment.find({})
+      .populate("caregiver", "name email role pic")
+      .populate("client", "name email role pic");
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error("Error fetching all appointments for admin:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 module.exports = {
   acceptGig,
   getAllAppointments,
   updateAppointment,
+  getAppointmentsForAdmin,
 };

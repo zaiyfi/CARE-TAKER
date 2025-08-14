@@ -56,7 +56,7 @@ const Caregiver = ({ auth, userGigs }) => {
       <div className="mt-6 space-y-6 text-gray-700">
         <div className="bg-white shadow-sm rounded-lg p-4">
           <h3 className="text-lg font-semibold text-gray-800">ID Card</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
             {user.verificationInfo?.cnicFront ? (
               <img
                 src={user.verificationInfo.cnicFront}
@@ -70,7 +70,7 @@ const Caregiver = ({ auth, userGigs }) => {
               <img
                 src={user.verificationInfo.cnicBack}
                 alt="CNIC Back"
-                className="w-32 h-20 object-cover rounded"
+                className="w-32 h-22 object-cover rounded"
               />
             ) : (
               <p className="text-sm">No ID provided yet.</p>

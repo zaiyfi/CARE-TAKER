@@ -1,44 +1,46 @@
 // React/Redux Hooks and React Router
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// Router
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Pages
 import Home from "./pages/Gigs";
+import HomePage from "./pages/HomePage";
 import Profile from "./pages/Profile";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import Admin from "./pages/admin/Admin";
+import Page404 from "./pages/Page404";
+import ProductDetails from "./pages/ProductDetails";
+import UserData from "./pages/UserData";
+import ContactAdmin from "./pages/ContactAdmin";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 // Components
 import Navbar from "./components/Navbar";
 import LoaderSpinner from "./components/loaderSpinner";
-import ProtectedUserRoute from "./components/Others/ProtectedUserRoute";
 import ProtectedAdminRoute from "./components/Others/ProtectedAdminRoute";
 import ChatWindow from "./components/Chat/ChatWindow";
-
-// Redux Store
-import store from "./redux/store";
-import Admin from "./pages/admin/Admin";
-import Page404 from "./pages/Page404";
-import ProductDetails from "./pages/ProductDetails";
 import ProtectedLogin from "./components/Others/ProtectedLogin";
-import UserData from "./pages/UserData";
-import { setLoader } from "./redux/loaderSlice";
-
-import "leaflet/dist/leaflet.css";
-import NearMeMap from "./pages/NearMeMap";
 import FloatingChatList from "./components/Chat/FloatingChatList";
 import UnprotectedRoute from "./components/Others/UnprotectedRoute";
 
+// Redux Store
+import store from "./redux/store";
+import { setLoader } from "./redux/loaderSlice";
+
+// Map
+import "leaflet/dist/leaflet.css";
+import NearMeMap from "./pages/NearMeMap";
+
 // Socket.io client
 import socket from "./socket";
-import HomePage from "./pages/HomePage";
 
 // Toast notifications
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ContactAdmin from "./pages/ContactAdmin";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
   // Getting the state of loader
