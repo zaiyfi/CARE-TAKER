@@ -27,7 +27,7 @@ exports.getUserChats = async (req, res) => {
       members: { $in: [req.user.id] },
     })
       .sort({ updatedAt: -1 })
-      .populate("members", "name email pic"); // populate name, email, and pic
+      .populate("members", "name email pic role"); // populate name, email, and pic
 
     res.status(200).json(chats);
   } catch (error) {

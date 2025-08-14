@@ -117,7 +117,8 @@ const VerificationForm = ({
           value={caregiverType}
           onChange={handleCaregiverTypeChange}
           required={!isEdit}
-          className="w-full border px-3 py-2 mb-4"
+          disabled={isEdit}
+          className="w-full border px-3 py-2 mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <option value="">Select</option>
           <option value="Child">Child</option>
@@ -125,15 +126,15 @@ const VerificationForm = ({
           <option value="Pet">Pet</option>
           <option value="Other">Other</option>
         </select>
-
         {/* CNIC Front */}
         <label className="block text-sm mb-1">CNIC Front</label>
         <input
           type="file"
           accept="image/*"
           required={!isEdit}
+          disabled={isEdit} // disable if editing
           onChange={(e) => handleFileChange(e, "cnicFront")}
-          className="mb-2"
+          className="mb-2 disabled:opacity-50 disabled:cursor-not-allowed"
         />
         {preview.cnicFront && (
           <img
@@ -149,8 +150,9 @@ const VerificationForm = ({
           type="file"
           accept="image/*"
           required={!isEdit}
+          disabled={isEdit} // disable if editing
           onChange={(e) => handleFileChange(e, "cnicBack")}
-          className="mb-2"
+          className="mb-2 disabled:opacity-50 disabled:cursor-not-allowed"
         />
         {preview.cnicBack && (
           <img

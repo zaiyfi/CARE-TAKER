@@ -33,9 +33,9 @@ const ProductDetails = () => {
   // Check if appointment with this caregiver is already booked
   const existingAppointment = appointments.find(
     (a) =>
-      a.client._id === auth?.user?._id &&
-      a.caregiver._id === currentProduct?.applicant._id &&
-      ["Assigned", "Pending"].includes(a.status) // Only block if active
+      a?.client?._id === auth?.user?._id &&
+      a?.caregiver?._id === currentProduct?.applicant?._id &&
+      ["Assigned", "Pending"].includes(a?.status)
   );
 
   useEffect(() => {
@@ -104,7 +104,7 @@ const ProductDetails = () => {
       if (res.ok) {
         toast.success("Appointment booked successfully!");
         setShowPopup(false);
-        dispatch(addAppointment(data));
+        dispatch(addAppointment(data.appointment));
       } else {
         toast.error(data.message || "Failed to book appointment");
       }

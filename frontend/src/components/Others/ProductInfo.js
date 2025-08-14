@@ -14,8 +14,11 @@ const ProductInfo = ({ product }) => {
             <strong>Experience</strong>
             <span>(years)</span>
           </p>
-
-          <strong>Price</strong>
+          <p>
+            {" "}
+            <strong>Price</strong>
+            <span>(per day)</span>
+          </p>{" "}
         </div>
         <div className="text-center">
           <p>
@@ -23,7 +26,7 @@ const ProductInfo = ({ product }) => {
               ? "Highly"
               : "Average"}
           </p>
-          <p>{product.experience}</p> <p>$ {product.hourlyRate}</p>
+          <p>{product.experience}</p> <p>Rs {product.hourlyRate}</p>
         </div>
       </div>
     </div>

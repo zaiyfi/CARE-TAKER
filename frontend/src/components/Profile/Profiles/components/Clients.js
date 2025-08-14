@@ -22,12 +22,12 @@ const Clients = () => {
       {/* Assigned Caregivers */}
       <div>
         <h3 className="text-2xl font-semibold mb-4">Assigned Caregivers</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {assignedAppointments.length > 0 ? (
             assignedAppointments.map((appt) => (
               <div
                 key={appt._id}
-                className="border rounded-lg p-4 shadow hover:shadow-md transition"
+                className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
               >
                 <div className="flex items-center gap-4 mb-2">
                   <img

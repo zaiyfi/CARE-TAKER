@@ -1,6 +1,9 @@
 import format from "date-fns/format";
+import { useSelector } from "react-redux";
 
 const AppointmentCard = ({ appt, onUpdateStatus }) => {
+  const { auth } = useSelector((state) => state.auth);
+
   const apptDate = new Date(appt.date);
   const formattedDate = format(apptDate, "EEEE, MMM d, yyyy");
 
@@ -16,24 +19,46 @@ const AppointmentCard = ({ appt, onUpdateStatus }) => {
     <li className="border p-4 rounded-lg shadow-sm bg-white">
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3">
-          {/* Client Picture */}
-          {appt.client?.pic && (
-            <img
-              src={appt.client.pic}
-              alt="Client"
-              className="w-12 h-12 rounded-full object-cover"
-            />
+          {/* Person Info */}
+          {auth.user.role === "Caregiver" ? (
+            <>
+              {appt.client?.pic && (
+                <img
+                  src={appt.client.pic}
+                  alt="Client"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              )}
+              <div>
+                <p className="font-medium">Client: {appt.client?.name}</p>
+                <p className="text-sm text-gray-600">
+                  {formattedDate} @ {appt.startTime} - {appt.endTime}
+                </p>
+                <p className="text-sm text-gray-700 font-semibold mt-1">
+                  Service: {appt.serviceType}
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              {appt.caregiver?.pic && (
+                <img
+                  src={appt.caregiver.pic}
+                  alt="Caregiver"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              )}
+              <div>
+                <p className="font-medium">Caregiver: {appt.caregiver?.name}</p>
+                <p className="text-sm text-gray-600">
+                  {formattedDate} @ {appt.startTime} - {appt.endTime}
+                </p>
+                <p className="text-sm text-gray-700 font-semibold mt-1">
+                  Service: {appt.serviceType}
+                </p>
+              </div>
+            </>
           )}
-
-          <div>
-            <p className="font-medium">Client: {appt.client.name}</p>
-            <p className="text-sm text-gray-600">
-              {formattedDate} @ {appt.startTime} - {appt.endTime}
-            </p>
-            <p className="text-sm text-gray-700 font-semibold mt-1">
-              Service: {appt.serviceType}
-            </p>
-          </div>
         </div>
 
         <div>
@@ -53,37 +78,41 @@ const AppointmentCard = ({ appt, onUpdateStatus }) => {
         </div>
       </div>
 
-      <div className="mt-3 flex gap-2">
-        {appt.status === "Pending" && (
-          <button
-            className="px-3 py-1 bg-green-500 text-white text-sm rounded"
-            onClick={() => onUpdateStatus(appt._id, "Assigned")}
-          >
-            Assign
-          </button>
-        )}
+      {auth.user.role === "Caregiver" && (
+        <div className="mt-3 flex gap-2">
+          {appt.status === "Pending" && (
+            <button
+              className="px-3 py-1 bg-green-500 text-white text-sm rounded"
+              onClick={() => onUpdateStatus(appt._id, "Assigned")}
+            >
+              Assign
+            </button>
+          )}
 
-        {appt.status !== "Cancelled" && appt.status !== "Completed" && (
-          <button
-            className="px-3 py-1 bg-red-500 text-white text-sm rounded"
-            onClick={() => onUpdateStatus(appt._id, "Cancelled")}
-          >
-            Cancel
-          </button>
-        )}
+          {appt.status !== "Cancelled" && appt.status !== "Completed" && (
+            <button
+              className="px-3 py-1 bg-red-500 text-white text-sm rounded"
+              onClick={() => onUpdateStatus(appt._id, "Cancelled")}
+            >
+              Cancel
+            </button>
+          )}
 
-        {appt.status === "Assigned" && (
-          <button
-            className={`px-3 py-1 text-white text-sm rounded ${
-              canComplete ? "bg-blue-500" : "bg-gray-400 cursor-not-allowed"
-            }`}
-            onClick={() => canComplete && onUpdateStatus(appt._id, "Completed")}
-            disabled={!canComplete}
-          >
-            Complete
-          </button>
-        )}
-      </div>
+          {appt.status === "Assigned" && (
+            <button
+              className={`px-3 py-1 text-white text-sm rounded ${
+                canComplete ? "bg-blue-500" : "bg-gray-400 cursor-not-allowed"
+              }`}
+              onClick={() =>
+                canComplete && onUpdateStatus(appt._id, "Completed")
+              }
+              disabled={!canComplete}
+            >
+              Complete
+            </button>
+          )}
+        </div>
+      )}
     </li>
   );
 };

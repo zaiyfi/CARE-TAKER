@@ -44,29 +44,37 @@ const ProfileDetails = () => {
   }, [dispatch, auth.token, auth.user._id]);
 
   return (
-    <div className="w-[90%] mx-auto md:w-[75%] flex justify-between md:mx-[5%] py-4">
-      <div className="w-[17%]">
-        <div className="round-img mb-6">
+    <div className="w-full flex flex-col md:flex-row items-center md:items-start justify-between py-4 px-4 sm:px-6 lg:px-8">
+      {/* Profile Picture */}
+      <div className="flex flex-col items-center md:w-1/4">
+        <div className="mb-4">
           <img
             src={auth.user.pic}
-            alt=""
-            className="w-[200px] h-[200px] rounded-full mb-2"
+            alt={auth.user.name}
+            className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full object-cover border-4 border-primary"
           />
-          {isLoggedIn && <UserImgUpload auth={auth} />}
         </div>
+        {isLoggedIn && <UserImgUpload auth={auth} />}
       </div>
-      <div className="w-[73%]">
-        <div className="border-b-2 pb-10">
-          <h2 className="text-4xl font-semibold w-full">
-            {auth.user.name}{" "}
+
+      {/* Profile Info */}
+      <div className="flex-1 mt-6 md:mt-0 md:pl-8 w-full">
+        <div className="border-b-2 pb-6">
+          <h2 className="text-2xl sm:text-3xl font-semibold flex items-center gap-2">
+            {auth.user.name}
             {auth.user.verificationStatus === "Approved" && (
-              <span className="text-green-600 inline-block align-middle">
-                <MdVerifiedUser title="Verified" className="inline text-2xl" />
-              </span>
+              <MdVerifiedUser
+                title="Verified"
+                className="text-green-600 text-xl sm:text-2xl"
+              />
             )}
           </h2>
-          <h2 className="text-base font-normal">{auth.user.email}</h2>
+          <h2 className="text-sm sm:text-base font-normal text-gray-600">
+            {auth.user.email}
+          </h2>
         </div>
+
+        {/* Conditional Render */}
         {auth.user.role === "Caregiver" ? (
           <Caregiver auth={auth} userGigs={userGigs} />
         ) : (

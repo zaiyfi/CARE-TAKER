@@ -25,6 +25,7 @@ router.post(
   sendApplication
 );
 
+// update gig
 router.patch("/update/:_id", requireAuth, updateGig);
 router.patch("/addReview/:gigId", requireAuth, addReview);
 

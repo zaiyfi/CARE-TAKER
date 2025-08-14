@@ -14,7 +14,7 @@ const acceptGig = async (req, res) => {
     }
 
     // Create the appointment
-    const appointment = await Appointment.create({
+    let appointment = await Appointment.create({
       caregiver: caregiverId,
       client: clientId,
       date: new Date(date),
@@ -26,7 +26,6 @@ const acceptGig = async (req, res) => {
 
     // Dynamic role-based assignment
     if (client.role === "Client") {
-      // Assign caregiver to client
       if (
         !client.assignedCaregiver ||
         client.assignedCaregiver.toString() !== caregiverId
@@ -35,13 +34,11 @@ const acceptGig = async (req, res) => {
         await client.save();
       }
 
-      // Assign client to caregiver's list if not already assigned
       if (!caregiver.assignedClients.includes(clientId)) {
         caregiver.assignedClients.push(clientId);
         await caregiver.save();
       }
     } else if (caregiver.role === "Client") {
-      // If roles are flipped
       if (
         !caregiver.assignedCaregiver ||
         caregiver.assignedCaregiver.toString() !== clientId
@@ -56,9 +53,12 @@ const acceptGig = async (req, res) => {
       }
     }
 
-    res.status(201).json({
-      appointment,
-    });
+    // Populate caregiver and client fields before sending response
+    appointment = await Appointment.findById(appointment._id)
+      .populate("caregiver", "name email role")
+      .populate("client", "name email role");
+
+    res.status(201).json({ appointment });
   } catch (error) {
     console.error("Appointment creation error:", error);
     res.status(500).json({ message: "Server error" });

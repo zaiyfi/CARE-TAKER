@@ -1,11 +1,8 @@
 import { useState } from "react";
-// React Icons
 import { GrStatusGood } from "react-icons/gr";
 import { FaUser } from "react-icons/fa";
 import { PiPackageFill } from "react-icons/pi";
-import { MdEventNote } from "react-icons/md"; // <-- Icon for appointments
-
-// Custom hooks and components
+import { MdEventNote } from "react-icons/md";
 import useAddProduct from "../hooks/useAddProduct";
 import Products from "../components/Profile/Product/Products";
 import ProfileDetails from "../components/Profile/Profiles/ProfileDetails";
@@ -21,43 +18,42 @@ const Profile = () => {
   return (
     <div className="flex flex-col md:flex-row my-4 select-none">
       {product && (
-        <div className="flex border-2 border-green-500 bg-white p-2 rounded mb-4">
-          <GrStatusGood className="text-green-500 mx-1 text-lg mt-0.5" />
-          <p className="text-black">Product added successfully!</p>
+        <div className="flex border-2 border-primary bg-lightPrimary p-2 rounded mb-4 mx-4 md:mx-0">
+          <GrStatusGood className="text-primary mx-1 text-lg mt-0.5" />
+          <p className="text-black text-sm md:text-base">
+            Product added successfully!
+          </p>
         </div>
       )}
 
-      <div className="tab border-b mx-auto w-2/3 flex flex-row md:flex-col md:border-b-0 md:border-e md:w-[15%]">
-        <div
-          className={`links mx-auto w-full ${activeTab === 1 ? "activeB" : ""}`}
-          onClick={() => setActiveTab(1)}
-        >
-          <FaUser className="icons" />
-          <button className="tablinks">Profile</button>
-        </div>
-
-        {auth?.user?.role === "Caregiver" && (
-          <>
-            <div
-              className={`links ${activeTab === 2 ? "activeB" : ""}`}
-              onClick={() => setActiveTab(2)}
-            >
-              <PiPackageFill className="icons" />
-              <button className="tablinks">Application</button>
-            </div>
-
-            <div
-              className={`links ${activeTab === 3 ? "activeB" : ""}`}
-              onClick={() => setActiveTab(3)}
-            >
-              <MdEventNote className="icons" />
-              <button className="tablinks">Appointments</button>
-            </div>
-          </>
-        )}
+      {/* Sidebar / Tab Menu */}
+      {/* Sidebar / Tab Menu */}
+      <div className="flex md:flex-col w-full md:w-[15%] bg-white border-b md:border-b-0 md:border-r shadow-sm">
+        {[
+          { id: 1, icon: FaUser, label: "Profile" },
+          ...(auth?.user?.role === "Caregiver"
+            ? [{ id: 2, icon: PiPackageFill, label: "Application" }]
+            : []),
+          { id: 3, icon: MdEventNote, label: "Appointments" },
+        ].map(({ id, icon: Icon, label }) => (
+          <div
+            key={id}
+            className={`flex-1 flex flex-col items-center gap-1 py-3 cursor-pointer transition-all
+        ${
+          activeTab === id
+            ? "bg-lightPrimary text-primary font-semibold border-l-4 border-primary md:border-l-0 md:border-t-4 shadow-inner"
+            : "hover:bg-lightPrimary text-gray-700"
+        }`}
+            onClick={() => setActiveTab(id)}
+          >
+            <Icon className="text-xl" />
+            <span className="text-xs md:text-sm">{label}</span>
+          </div>
+        ))}
       </div>
 
-      <div className="flex-1">
+      {/* Content Area */}
+      <div className="flex-1 p-4">
         {activeTab === 1 && (
           <ProfileDetails user={auth.user} products={gigs} token={auth.token} />
         )}

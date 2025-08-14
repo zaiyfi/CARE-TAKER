@@ -53,10 +53,10 @@ const Caregiver = ({ auth, userGigs }) => {
 
   return (
     <div>
-      <div className="mt-6 space-y-4 text-gray-700">
-        <div>
-          <h3 className="text-xl font-semibold">ID Card</h3>
-          <div className="flex flex-col sm:flex-row gap-4 mt-2">
+      <div className="mt-6 space-y-6 text-gray-700">
+        <div className="bg-white shadow-sm rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-gray-800">ID Card</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
             {user.verificationInfo?.cnicFront ? (
               <img
                 src={user.verificationInfo.cnicFront}
@@ -64,7 +64,7 @@ const Caregiver = ({ auth, userGigs }) => {
                 className="w-32 h-20 object-cover rounded"
               />
             ) : (
-              <p className="text-sm">No ID Card provided yet.</p>
+              <p className="text-sm">No ID provided yet.</p>
             )}
             {user.verificationInfo?.cnicBack ? (
               <img
@@ -105,7 +105,7 @@ const Caregiver = ({ auth, userGigs }) => {
               ? "Waiting for admin approval."
               : user.verificationStatus === "Rejected"
               ? "Please resubmit your documents."
-              : "Congratulations. You are verified!"}
+              : "You are verified!"}
           </p>
         </div>
 

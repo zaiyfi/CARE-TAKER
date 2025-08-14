@@ -25,18 +25,20 @@ module.exports = (server) => {
 
     socket.on(
       "send-message",
-      async ({ chatId, senderId, receiverId, text }) => {
+      async ({ chatId, senderId, senderName, receiverId, text }) => {
         try {
           // Save to DB
           console.log("Saving message to DB:", {
             chatId,
             senderId,
+            senderName,
             receiverId,
             text,
           });
           const message = new Message({
             chatId,
             senderId,
+            senderName,
             receiverId,
             text,
           });

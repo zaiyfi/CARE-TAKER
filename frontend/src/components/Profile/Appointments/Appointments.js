@@ -1,9 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import format from "date-fns/format";
 import isSameWeek from "date-fns/isSameWeek";
 import addWeeks from "date-fns/addWeeks";
-import isWithinInterval from "date-fns/isWithinInterval";
 
 import { setAppointments } from "../../../redux/appointmentsSlice";
 import {
@@ -95,7 +93,7 @@ const Appointment = () => {
         </select>
       </div>
 
-      <h3 className="text-2xl font-semibold mb-4">My Upcoming Appointments</h3>
+      <h3 className="text-2xl font-semibold mb-4">My Appointments</h3>
 
       <ul className="space-y-3">
         {filteredAppointments.length > 0 ? (
